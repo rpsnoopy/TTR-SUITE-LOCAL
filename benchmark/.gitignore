@@ -1,0 +1,14 @@
+# Downloaded datasets (can be large)
+datasets/
+
+# Generated outputs
+results/
+logs/
+checkpoints/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
