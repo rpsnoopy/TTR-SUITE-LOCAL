@@ -63,11 +63,15 @@ class OllamaClient:
         if thinking:
             messages = _inject_think_directive(messages)
 
+        import config
         payload = {
             "model":    model,
             "messages": messages,
             "stream":   False,
-            "options":  {"num_predict": num_predict},
+            "options":  {
+                "num_predict": num_predict,
+                "num_ctx":     config.OLLAMA_NUM_CTX,
+            },
         }
 
         t0 = time.monotonic()

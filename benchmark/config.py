@@ -18,6 +18,8 @@ LOCAL_RESULTS_ALIAS = BENCHMARK_ROOT / "results"
 OLLAMA_BASE_URL   = "http://localhost:11434"
 OLLAMA_TIMEOUT_S  = 300          # seconds — 300s per cold start + CUAD long docs
 OLLAMA_KEEP_ALIVE = "0"          # release VRAM immediately after each model
+OLLAMA_NUM_CTX    = 4096         # context window — max needed ~2500 tok (CUAD);
+                                  # default 65536 wastes VRAM on RTX 4090 16GB
 
 # ── Models ─────────────────────────────────────────────────────────────────────
 # Maps CLI-friendly name → config dict
