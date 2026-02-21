@@ -32,11 +32,19 @@ OLLAMA_NUM_CTX    = 4096         # context window — max needed ~2500 tok (CUAD
 
 MODELS: dict[str, dict] = {
     # ── Modelli locali (Ollama) ─────────────────────────────────────────────
-    # ESCLUSO: qwen3-32b gira a 3.3 tok/s su RTX 3090 (24GB) — troppo lento
-    # per benchmark pratici (~25h per run completo). Non usare su questo HW.
+    "qwen3-14b": {
+        "provider": "ollama",
+        "tag":      "qwen3:14b",        # 9.3 GB — entra in 16GB VRAM, pure GPU
+        "thinking": False,
+    },
     "qwen3-30b-a3b": {
         "provider": "ollama",
-        "tag":      "qwen3:30b",        # modello scaricato (dense 30B, non MoE)
+        "tag":      "qwen3:30b",        # 18 GB — split CPU/GPU su 16GB VRAM (~22 tok/s)
+        "thinking": False,
+    },
+    "qwen3-32b": {
+        "provider": "ollama",
+        "tag":      "qwen3:32b-q4_K_M", # 20 GB — split CPU/GPU su 16GB VRAM (~3-22 tok/s)
         "thinking": False,
     },
     "mistral-small-24b": {
@@ -58,7 +66,7 @@ MODELS: dict[str, dict] = {
 }
 
 # Modelli locali di default (esclude Claude per non richiedere API key di default)
-DEFAULT_MODELS = ["qwen3-30b-a3b", "mistral-small-24b"]
+DEFAULT_MODELS = ["qwen3-14b", "qwen3-30b-a3b", "qwen3-32b", "mistral-small-24b"]
 
 # ── Benchmarks ─────────────────────────────────────────────────────────────────
 DEFAULT_BENCHMARKS = ["legalbench", "cuad", "ifeval", "mmlupro"]
