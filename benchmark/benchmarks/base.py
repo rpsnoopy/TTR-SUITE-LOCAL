@@ -158,7 +158,7 @@ class BenchmarkBase(ABC):
             results.append(record)
 
             self._log.info(
-                "[%s | %s] %s → %s (%.0f ms, %.1f tok/s)",
+                "[%s | %s] %s -> %s (%.0f ms, %.1f tok/s)",
                 self.name,
                 model_name,
                 task_id,

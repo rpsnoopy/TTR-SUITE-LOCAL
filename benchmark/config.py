@@ -90,14 +90,14 @@ CUAD_REPO_URL = "https://github.com/TheAtticusProject/cuad"
 CUAD_DIR      = DATASETS_DIR / "cuad"
 
 CUAD_IP_CATEGORIES = [
-    "IP-Ownership-Assignment",
-    "Non-Compete",
-    "License-Grant",
-    "Limitation-of-Liability",
-    "Indemnification",
-    "Termination-for-Convenience",
     "Change-of-Control",
-    "Audit-Rights",
+    "Non-Compete",
+    "Anti-Assignment",
+    "Exclusivity",
+    "Governing-Law",
+    "Renewal-Term",
+    "Expiration-Date",
+    "Parties",
 ]
 
 # ── IFEval ─────────────────────────────────────────────────────────────────────

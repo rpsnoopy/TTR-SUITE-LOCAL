@@ -1,8 +1,11 @@
 """
 TTR-SUITE Benchmark Suite — CUAD benchmark
 
-Scarica il dataset CUAD da HuggingFace (theatticusproject/cuad) e valuta
-l'estrazione di clausole IP su 8 categorie con F1 SQuAD-style.
+Scarica il dataset CUAD da HuggingFace (alex-apostolo/filtered-cuad) e valuta
+l'estrazione di clausole contrattuali su 8 categorie con F1 SQuAD-style.
+
+Categorie: Change-of-Control, Non-Compete, Anti-Assignment, Exclusivity,
+           Governing-Law, Renewal-Term, Expiration-Date, Parties
 
 Il campo ``is_correct`` in ResultRecord contiene l'F1 (0-1) per istanza;
 Sheet 4 dell'XLSX ne calcola la media per categoria.
@@ -21,38 +24,35 @@ from src.logger import setup_logger
 
 log = setup_logger(__name__)
 
-# HuggingFace dataset ID per CUAD
-CUAD_HF_DATASET = "theatticusproject/cuad"
+# HuggingFace dataset ID per CUAD (Parquet, formato SQuAD, no loading script)
+CUAD_HF_DATASET = "alex-apostolo/filtered-cuad"
 
 # Mappa categoria → pattern da cercare nel testo della domanda
+# Categorie allineate a quelle effettivamente presenti in alex-apostolo/filtered-cuad
 CATEGORY_MATCHERS: dict[str, list[str]] = {
-    "IP-Ownership-Assignment": [
-        "ip ownership", "intellectual property ownership", "ip assignment",
-        "ip rights", "intellectual property", "ownership of ip",
-    ],
-    "Non-Compete": [
-        "non-compete", "non compete", "noncompete",
-        "competitive activities", "compete",
-    ],
-    "License-Grant": [
-        "license grant", "licence grant", "license to",
-    ],
-    "Limitation-of-Liability": [
-        "limitation of liability", "limit.*liability", "liability.*limit",
-        "cap on liability",
-    ],
-    "Indemnification": [
-        "indemnif",
-    ],
-    "Termination-for-Convenience": [
-        "termination for convenience", "terminate.*convenience",
-        "convenience termination",
-    ],
     "Change-of-Control": [
         "change of control", "change-of-control",
     ],
-    "Audit-Rights": [
-        "audit", "inspection right", "right to audit",
+    "Non-Compete": [
+        "non-compete", "non compete", "noncompete",
+    ],
+    "Anti-Assignment": [
+        "anti-assignment", "anti assignment", "assignment",
+    ],
+    "Exclusivity": [
+        "exclusivity", "exclusive",
+    ],
+    "Governing-Law": [
+        "governing law", "governing jurisdiction", "applicable law",
+    ],
+    "Renewal-Term": [
+        "renewal term", "renewal period", "auto.?renew",
+    ],
+    "Expiration-Date": [
+        "expiration date", "expiry date", "term expir",
+    ],
+    "Parties": [
+        "parties", "party to",
     ],
 }
 
@@ -78,7 +78,7 @@ class CUADBenchmark(BenchmarkBase):
         from datasets import load_dataset  # lazy import
 
         log.info("Caricamento CUAD da HuggingFace (%s)...", CUAD_HF_DATASET)
-        load_kwargs = dict(verification_mode="no_checks", trust_remote_code=True)
+        load_kwargs = dict(verification_mode="no_checks")
         try:
             ds = load_dataset(CUAD_HF_DATASET, split="test", **load_kwargs)
         except Exception:  # noqa: BLE001

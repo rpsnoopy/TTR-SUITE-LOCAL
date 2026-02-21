@@ -40,7 +40,10 @@ def setup_logger(
     )
 
     # ── Console handler ────────────────────────────────────────────────────────
-    console = logging.StreamHandler(sys.stdout)
+    # Force UTF-8 on Windows (default cp1252 breaks non-ASCII chars)
+    stream = open(sys.stdout.fileno(), mode="w", encoding="utf-8", buffering=1, closefd=False) \
+        if hasattr(sys.stdout, "fileno") else sys.stdout
+    console = logging.StreamHandler(stream)
     console.setLevel(level)
     console.setFormatter(fmt)
     logger.addHandler(console)

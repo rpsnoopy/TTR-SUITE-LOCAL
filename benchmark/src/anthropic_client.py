@@ -117,7 +117,7 @@ class AnthropicClient:
 
     def is_model_loaded(self, model: str) -> bool:
         """Restituisce True se l'API key è configurata (modelli sempre disponibili)."""
-        return bool(os.environ.get("ANTHROPIC_API_KEY"))
+        return bool(os.environ.get("ANTHROPIC_API_KEY", "").strip())
 
     def health_check(self) -> bool:
         """
@@ -130,7 +130,7 @@ class AnthropicClient:
             log.warning("Package 'anthropic' non installato. Esegui: pip install anthropic")
             return False
 
-        if not os.environ.get("ANTHROPIC_API_KEY"):
+        if not os.environ.get("ANTHROPIC_API_KEY", "").strip():
             log.warning("ANTHROPIC_API_KEY non impostata.")
             return False
 
@@ -148,7 +148,7 @@ class AnthropicClient:
                     "Package 'anthropic' non trovato. Esegui: pip install anthropic"
                 ) from exc
 
-            api_key = os.environ.get("ANTHROPIC_API_KEY")
+            api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
             if not api_key:
                 raise RuntimeError(
                     "ANTHROPIC_API_KEY non impostata. "
