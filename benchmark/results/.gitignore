@@ -1,0 +1,5 @@
+# Ignore future run outputs — only manually curated results are committed
+*
+!.gitignore
+!*.xlsx
+!*.csv

@@ -1,8 +1,11 @@
 # Downloaded datasets (can be large)
 datasets/
 
-# Generated outputs
-results/
+# Generated outputs (future runs ignored; curated results committed manually)
+results/*
+!results/.gitignore
+!results/*.xlsx
+!results/*.csv
 logs/
 checkpoints/
 
