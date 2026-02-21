@@ -30,11 +30,8 @@ OLLAMA_KEEP_ALIVE = "0"          # release VRAM immediately after each model
 
 MODELS: dict[str, dict] = {
     # ── Modelli locali (Ollama) ─────────────────────────────────────────────
-    "qwen3-32b": {
-        "provider": "ollama",
-        "tag":      "qwen3:32b-q4_K_M",
-        "thinking": False,         # disabilitato: a 3.6 tok/s causa timeout sistematici
-    },
+    # ESCLUSO: qwen3-32b gira a 3.3 tok/s su RTX 3090 (24GB) — troppo lento
+    # per benchmark pratici (~25h per run completo). Non usare su questo HW.
     "qwen3-30b-a3b": {
         "provider": "ollama",
         "tag":      "qwen3:30b",        # modello scaricato (dense 30B, non MoE)
@@ -59,7 +56,7 @@ MODELS: dict[str, dict] = {
 }
 
 # Modelli locali di default (esclude Claude per non richiedere API key di default)
-DEFAULT_MODELS = ["qwen3-32b", "qwen3-30b-a3b", "mistral-small-24b"]
+DEFAULT_MODELS = ["qwen3-30b-a3b", "mistral-small-24b"]
 
 # ── Benchmarks ─────────────────────────────────────────────────────────────────
 DEFAULT_BENCHMARKS = ["legalbench", "cuad", "ifeval", "mmlupro"]
