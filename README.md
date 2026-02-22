@@ -14,11 +14,9 @@ Identificare il miglior LLM locale eseguibile su **RTX 4090 16GB VRAM** con perf
 | gpt-oss:20b | 16.7% | 51.2% | 86.0% | 23.5% | **80** |
 | qwen3:30b-a3b | **20.8%** | 48.8% | 84.0% | 11.0% | 32 |
 | qwen3:14b | 12.5% | 51.2% | 87.0% | 15.5% | 35 |
-| deepcoder:14b | 16.7% | 46.2% | 79.0% | ~22%† | 37 |
+| deepcoder:14b | 12.5% | 46.2% | 79.0% | 23.2% | 32 |
 | mistral-small:24b | 8.3% | 51.2% | 81.0% | **37.0%** | 21 |
 | qwen3:32b | 16.7% | 46.2% | — | — | 5⛔ |
-
-> †deepcoder-14b MMLU-Pro in corso al momento dell'ultimo aggiornamento
 
 **Raccomandazione:** `gpt-oss:20b` come modello primario locale (miglior bilanciamento velocità/qualità), `mistral-small:24b` per task a priorità MMLU-Pro, Claude API per validazione finale.
 

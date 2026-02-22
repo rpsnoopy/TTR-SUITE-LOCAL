@@ -47,12 +47,11 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 | **gpt-oss:20b** ⚡ | 16.7% | 51.2% | 86.0% | 23.5% | **80** | ~13GB |
 | **qwen3:30b-a3b** | **20.8%** | 48.8% | 84.0% | 11.0% | 32 | ~18GB* |
 | **qwen3:14b** | 12.5% | 51.2% | 87.0% | 15.5% | 35 | ~9GB |
-| **deepcoder:14b** (DeepSeek-R1) | 16.7% | 46.2% | 79.0% | 22%† | 37 | ~9GB |
+| **deepcoder:14b** (DeepSeek-R1) | 12.5% | 46.2% | 79.0% | 23.2% | 32 | ~9GB |
 | **mistral-small:24b** | 8.3% | 51.2% | 81.0% | **37.0%** | 21 | ~14GB |
 | **qwen3:32b** ⛔ | 16.7% | 46.2% | — | — | **5** | split CPU |
 
 > *qwen3:30b-a3b → CPU/GPU split su 16GB, velocità degradata
-> †deepcoder-14b MMLU-Pro: test in corso (59/200 completati al momento della stesura)
 > ⛔ qwen3:32b interrotto: 5 tok/s inaccettabile (CPU/GPU split su 16GB)
 
 ### Gap rispetto a Claude Sonnet 4.6
@@ -95,7 +94,7 @@ Se la priorità è la **conoscenza giuridica** (MMLU-Pro): **`mistral-small:24b`
 ### Cosa non usare in produzione TTR-SUITE
 - **qwen3:32b** — 5 tok/s su 16GB VRAM: inutilizzabile per uso interattivo
 - **qwen3:30b-a3b** — CPU/GPU split degradato, velocità e qualità compromesse su 16GB
-- **deepcoder:14b** — specializzato per codice, non porta vantaggi su task legali rispetto a gpt-oss:20b
+- **deepcoder:14b** — specializzato per codice, non porta vantaggi su task legali rispetto a gpt-oss:20b (risultati identici: LB 12.5-16.7%, CUAD 46%, IFEval 79%, MMLU-Pro 23%)
 
 ---
 
