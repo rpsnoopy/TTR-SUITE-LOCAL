@@ -129,7 +129,10 @@ class BenchmarkBase(ABC):
             messages = [{"role": "user", "content": prompt}]
 
             try:
-                result = client.chat(model_tag, messages, thinking=thinking)
+                import config as _cfg
+                num_predict = _cfg.BENCHMARK_NUM_PREDICT.get(self.name, 1024)
+                result = client.chat(model_tag, messages, thinking=thinking,
+                                     num_predict=num_predict)
             except RuntimeError as exc:
                 self._log.error("Chat error for task %s: %s", task_id, exc)
                 continue

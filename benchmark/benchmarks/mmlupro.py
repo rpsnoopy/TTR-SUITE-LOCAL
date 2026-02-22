@@ -12,6 +12,9 @@ import random
 import re
 
 import config
+
+# Fixed seed so every run samples the same law questions.
+SAMPLE_SEED = 42
 from benchmarks.base import BenchmarkBase
 from src.logger import setup_logger
 
@@ -49,9 +52,10 @@ class MMLUProBenchmark(BenchmarkBase):
             )
             law_items = list(enumerate(ds))[:n]
 
-        # Sample
+        # Sample — seeded for reproducibility across model runs
         k = min(n, len(law_items))
-        sample = random.sample(law_items, k)
+        rng = random.Random(SAMPLE_SEED)
+        sample = rng.sample(law_items, k)
 
         items = []
         for position, (orig_idx, row) in enumerate(sample):

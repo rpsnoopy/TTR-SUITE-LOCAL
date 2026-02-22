@@ -89,6 +89,16 @@ SAMPLE_SIZES: dict[str, tuple[int, int]] = {
     "mmlupro":    (200, 20),  # law questions (200 ≈ full law split)
 }
 
+# Max tokens to generate per benchmark (Ollama num_predict).
+# MMLU-Pro needs 4096 because Qwen3 models exhaust 1024 tokens on thinking
+# chains before producing a final answer letter, yielding empty responses.
+BENCHMARK_NUM_PREDICT: dict[str, int] = {
+    "legalbench": 512,    # short labels (Yes/No, single word)
+    "cuad":       512,    # short clause extractions
+    "ifeval":     1024,   # may require structured multi-line output
+    "mmlupro":    4096,   # Qwen3 thinking chains need room to finish
+}
+
 # ── LegalBench ─────────────────────────────────────────────────────────────────
 LEGALBENCH_REPO_URL = "https://github.com/HazyResearch/legalbench"
 LEGALBENCH_DIR      = DATASETS_DIR / "legalbench"
