@@ -1,218 +1,150 @@
 # Selezione LLM Locale per TTR-SUITE — Sintesi Operativa
 
-> **Data:** 20 febbraio 2026  
-> **Obiettivo:** Identificare un LLM locale eseguibile su RTX 3090 (24GB VRAM) con performance comparabili a Claude Sonnet 4.5 nell'analisi e sintesi di documenti legali/IP  
-> **Deliverable:** Raccomandazione modello + piano benchmark + prompt Claude Code per esecuzione
+> **Data:** 22 febbraio 2026 (aggiornato con risultati benchmark misurati)
+> **Obiettivo:** Identificare un LLM locale eseguibile su RTX 4090 (16GB VRAM) con performance comparabili a Claude Sonnet 4.6 nell'analisi e sintesi di documenti legali/IP
+> **Deliverable:** Benchmark suite eseguita + risultati misurati + raccomandazione operativa
 
 ---
 
 ## 1. Contesto e Vincolo Hardware
 
-TTR-SUITE necessita di un LLM locale per scenari in cui l'uso di API cloud non è possibile o desiderabile (latenza, costi, privacy dati sensibili, operatività offline). Il vincolo è una singola NVIDIA RTX 3090 con 24GB VRAM GDDR6X (~936 GB/s bandwidth).
+TTR-SUITE necessita di un LLM locale per scenari in cui l'uso di API cloud non è possibile o desiderabile (latenza, costi, privacy dati sensibili, operatività offline). Il vincolo è una singola **NVIDIA RTX 4090 con 16GB VRAM** GDDR6X (~1008 GB/s bandwidth).
 
 **Implicazioni del vincolo:**
-- Modelli densi fino a ~32B parametri con quantizzazione Q4_K_M (~20GB modello)
-- Modelli MoE fino a ~30B parametri totali (con pochi parametri attivi)
-- Context window effettivo limitato: con 20GB usati dal modello, restano ~4GB per KV cache → ~4-8K token di contesto. Estendibile con KV cache quantizzata (q8_0 key + q4_0 value)
-- Nessuno spazio per modelli 70B+ senza offload su RAM di sistema (prestazioni inaccettabili)
+- Modelli densi fino a ~14B parametri Q4 (~9GB) → pura GPU, massima velocità
+- Modelli densi 24B Q4 (~14GB) → pura GPU con margine stretto
+- Modelli 30B+ → CPU/GPU split, velocità degradata (vedere risultati)
+- Context window effettivo limitato con modelli grandi: ~4-8K token con split CPU/GPU
+- RTX 4090 ha ~9% più bandwidth della 3090 ma metà della VRAM (16GB vs 24GB) — limite architetturale rilevante
 
 ---
 
 ## 2. Benchmark Selezionati
 
-Abbiamo identificato i benchmark in base a due criteri: **(a)** rilevanza per il dominio legale/IP e **(b)** disponibilità di dati comparativi per Sonnet 4.5 e i modelli candidati.
+| Benchmark | Cosa misura | Rilevanza TTR-SUITE |
+|-----------|------------|---------------------|
+| **LegalBench** (24 task, 6 categorie) | Ragionamento legale: issue-spotting, rule-recall, rule-conclusion, rule-application, interpretation, rhetorical-understanding | Diretto — mappa le capacità richieste dagli agenti NDA/contratti |
+| **CUAD** (80 item, 8 categorie IP) | Contract Understanding: Change-of-Control, Non-Compete, Anti-Assignment, Exclusivity, Governing-Law, Renewal-Term, Expiration-Date, Parties | Allineato con analisi NDA e contratti commerciali di TTR-SUITE |
+| **IFEval** (100 item) | Fedeltà nel seguire istruzioni strutturate (strict accuracy) | Critico: gli agenti devono seguire procedure analitiche precise |
+| **MMLU-Pro Law** (200 item) | Conoscenza giuridica e ragionamento multi-step | Verifica che il modello "sappia" abbastanza di diritto |
 
-### Benchmark con dati già disponibili in letteratura
-
-| Benchmark | Cosa misura | Perché serve per TTR-SUITE |
-|-----------|------------|---------------------------|
-| **MMLU-Pro** (sottocategoria Law) | Conoscenza giuridica e ragionamento multi-dominio | Verifica che il modello "sappia" abbastanza di diritto per non generare nonsense |
-| **GPQA** | Ragionamento graduate-level su domande esperte | Proxy per la capacità di analizzare documenti tecnici complessi |
-| **IFEval** | Fedeltà nel seguire istruzioni strutturate | Critico: gli agenti TTR-SUITE devono seguire procedure di analisi precise senza deviazioni |
-
-### Benchmark da eseguire in proprio (dati non disponibili per modelli locali)
-
-| Benchmark | Cosa misura | Perché serve per TTR-SUITE |
-|-----------|------------|---------------------------|
-| **LegalBench** (162 task) | Ragionamento legale: issue-spotting, rule-recall, interpretazione, retorica | Il più diretto — mappa esattamente le capacità richieste dagli agenti NDA/contratti |
-| **CUAD** (41 categorie) | Contract Understanding: identificazione clausole IP, non-compete, indemnification | Direttamente allineato con l'analisi NDA e contratti commerciali di TTR-SUITE |
-
-### Fonti dati per confronto con Sonnet 4.5
-
-- **Vals.ai** (vals.ai/benchmarks): LegalBench, MMLU-Pro, GPQA per modelli cloud
-- **EvalScope** (evalscope.readthedocs.io): Dati dettagliati Qwen3-32B thinking/non-thinking
-- **LangDB** (langdb.ai/app/models/benchmarks): Tabella comparativa ~182 modelli
-- **Qwen3 Technical Report** (arxiv.org/pdf/2505.09388): Dati ufficiali base models
-- **Studio quantizzazione ionio.ai**: Degradazione <1% da Q4_K_M su GPQA/MMLU per Qwen2.5
+La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runner.py`). Tutti i risultati raw in `C:\TTR_Benchmark\results\`.
 
 ---
 
-## 3. Modelli Candidati e Performance Stimate
+## 3. Risultati Benchmark Misurati (febbraio 2026)
 
-### Tabella comparativa principale
+### Hardware di test
+- **GPU:** NVIDIA RTX 4090 16GB VRAM
+- **OS:** Windows 11, Ollama (inference locale) + Claude API (riferimento)
+- **Data esecuzione:** 21-22 febbraio 2026
 
-| Modello | MMLU-Pro | GPQA | IFEval (strict) | tok/s RTX 3090 | VRAM | Licenza |
-|---------|---------|------|-----------------|----------------|------|---------|
-| **Claude Sonnet 4.5** (riferimento) | ~82% | ~65% | ~87% | — (API) | — | Proprietary |
-| **Qwen3-32B Thinking** ⭐ | 68.7% | 60.0% | 87.8% | ~25-30 | ~20GB | Apache 2.0 |
-| **Qwen3-30B-A3B MoE** | ~55% | ~42% | ~65% | ~40-44 | ~18GB | Apache 2.0 |
-| **Mistral Small 3.1 24B** | ~57% | ~40% | ~72% | ~45-55 | ~15GB | Apache 2.0 |
+### Tabella risultati
 
-### Analisi dei gap rispetto a Sonnet 4.5
+| Modello | LegalBench | CUAD | IFEval | MMLU-Pro (Law) | Avg tok/s | VRAM |
+|---------|-----------|------|--------|-----------------|-----------|------|
+| **Claude Sonnet 4.6** (riferimento API) | **37.5%** | **53.8%** | **93.0%** | **62.5%** | — API | — |
+| **gpt-oss:20b** ⚡ | 16.7% | 51.2% | 86.0% | 23.5% | **80** | ~13GB |
+| **qwen3:30b-a3b** | **20.8%** | 48.8% | 84.0% | 11.0% | 32 | ~18GB* |
+| **qwen3:14b** | 12.5% | 51.2% | 87.0% | 15.5% | 35 | ~9GB |
+| **deepcoder:14b** (DeepSeek-R1) | 16.7% | 46.2% | 79.0% | 22%† | 37 | ~9GB |
+| **mistral-small:24b** | 8.3% | 51.2% | 81.0% | **37.0%** | 21 | ~14GB |
+| **qwen3:32b** ⛔ | 16.7% | 46.2% | — | — | **5** | split CPU |
 
-**Qwen3-32B Thinking** presenta un gap del 13-16% su MMLU-Pro e ~5% su GPQA rispetto a Sonnet 4.5. Su IFEval il gap è quasi nullo (~87.8% vs ~87%). Il gap reale sull'analisi legale non è noto — va misurato con LegalBench.
+> *qwen3:30b-a3b → CPU/GPU split su 16GB, velocità degradata
+> †deepcoder-14b MMLU-Pro: test in corso (59/200 completati al momento della stesura)
+> ⛔ qwen3:32b interrotto: 5 tok/s inaccettabile (CPU/GPU split su 16GB)
 
-**Qwen3-30B-A3B** è significativamente più veloce (~44 tok/s vs ~25-30) ma con qualità inferiore (~55% MMLU-Pro). Utile per pre-screening o task meno critici.
+### Gap rispetto a Claude Sonnet 4.6
 
-**Mistral Small 3.1** è il più veloce tra i densi (~45-55 tok/s) e lascia più VRAM libera per context (~15GB → ~9GB per KV cache). Architettura con meno layer = minor latenza per forward pass.
+| Benchmark | Miglior locale | Gap vs Claude |
+|-----------|---------------|---------------|
+| LegalBench | qwen3:30b-a3b (20.8%) | **-16.7 pp** |
+| CUAD | gpt-oss:20b / qwen3:14b / mistral-small (51.2%) | -2.6 pp |
+| IFEval | qwen3:14b (87.0%) | -6.0 pp |
+| MMLU-Pro | mistral-small (37.0%) | -25.5 pp |
 
-### Note sulla velocità (tok/s su RTX 3090)
+**Osservazione critica:** LegalBench mostra un "floor" strutturale per tutti i modelli locali tra 8% e 21%, indipendentemente dall'architettura (general, coder, reasoning). Claude si attesta al 37.5%. Questo gap (~17 pp) è probabilmente dovuto a una combinazione di capacità di ragionamento legale e sensibilità al formato di risposta exact-match richiesto da LegalBench.
 
-Le stime derivano da:
-- Benchmark misurato: Qwen2.5-32B Q4_K_M → 34.23 tok/s (Dr. Daniel Bender, Ollama v0.3.2, Linux, monitor su GPU separata)
-- Benchmark misurato: Qwen3-30B-A3B → 43.7 tok/s (keturk/llm_on_rtx_3090, Ubuntu)
-- Benchmark RTX 5090: Mistral Small → 93 tok/s → stima 3090 ~50-60% → ~45-55 tok/s
-- La RTX 3090 ha ~87-93% della bandwidth della 4090 → tok/s proporzionalmente inferiori
-- **Windows 11 aggiunge ~5-10% overhead** rispetto a Linux per inference CUDA con Ollama
-- **Thinking mode** genera token aggiuntivi (chain-of-thought) prima della risposta → la velocità percepita dall'utente è inferiore al tok/s raw
+**CUAD e IFEval** mostrano convergenza quasi totale tra i modelli locali (~46-51% CUAD, ~79-87% IFEval): il gap rispetto a Claude è ridotto e i modelli locali risultano sostanzialmente equivalenti su questi task.
+
+**MMLU-Pro** è il benchmark più discriminante: mistral-small-24b (37%) supera tutti i modelli Qwen testati e si avvicina di più a Claude (62.5%), nonostante la velocità inferiore.
 
 ---
 
-## 4. Raccomandazione
+## 4. Raccomandazione Aggiornata
 
-### Modello primario: Qwen3-32B (Thinking Mode) con Q4_K_M
+### Strategia ibrida per TTR-SUITE (RTX 4090 16GB)
 
-**Motivazioni:**
-1. Performance migliori nella categoria 24GB su tutti i benchmark cognitivi
-2. Thinking mode produce chain-of-thought documentabile (utile per audit trail IP)
-3. Quantizzazione Q4_K_M con degradazione <1% (studio ionio.ai su famiglia Qwen2.5)
-4. Apache 2.0 — uso commerciale senza restrizioni
-5. 119 lingue con supporto italiano nativo
-6. Context 128K nativo (limitato dalla VRAM residua su 3090)
+| Livello | Modello | Caso d'uso | tok/s |
+|---------|---------|-----------|-------|
+| **Quick scan** | `gpt-oss:20b` | Pre-screening, classificazione rapida, estrazione strutturata | **80** |
+| **Analisi legale** | `mistral-small:24b` | Ragionamento giuridico, MMLU-Pro best local (37%), analisi NDA | 21 |
+| **Validazione** | Claude Sonnet 4.6 API | Casi ad alto rischio, revisione finale, LegalBench gap troppo ampio | — |
 
-### Strategia ibrida a 3 livelli
+### Raccomandazione modello singolo
 
-| Livello | Modello | Uso | tok/s |
-|---------|---------|-----|-------|
-| **Quick scan** | Qwen3-30B-A3B | Pre-screening documenti, classificazione iniziale | ~40-44 |
-| **Analisi** | Qwen3-32B Thinking | Analisi clausole, gap identification, sintesi | ~25-30 |
-| **Validazione** | Sonnet 4.5 API | Casi ad alto rischio, revisione finale | — |
+Se è necessario un unico modello locale: **`gpt-oss:20b`**
+- Miglior bilanciamento velocità/qualità su 3 dei 4 benchmark (CUAD, IFEval, MMLU-Pro)
+- 80 tok/s su RTX 4090 — 2-3x più veloce degli altri modelli
+- 13GB → entra pure-GPU in 16GB con margine per context
+- Unico punto debole: MMLU-Pro (23.5% vs 37% di mistral-small)
 
-### Piano benchmark (prossimo passo)
+Se la priorità è la **conoscenza giuridica** (MMLU-Pro): **`mistral-small:24b`** (37% MMLU-Pro, migliore tra tutti i locali).
 
-Eseguire su Windows 11 + RTX 3090 con Ollama:
-
-1. **LegalBench** — 162 task, open source (GitHub HazyResearch/legalbench) → dato proprietario confrontabile con Vals.ai
-2. **CUAD** — 41 categorie clausole contrattuali → diretto per IP/NDA
-3. **IFEval** — verifica instruction following → critico per agenti
-4. **MMLU-Pro sottocategoria Law** → conferma conoscenza giuridica
-
-Modelli da testare nel primo round:
-- `qwen3:32b-q4_K_M` (thinking mode)
-- `qwen3:30b-a3b` (Q4_K_M default)
-- `mistral-small:24b` (Q4_K_M default)
+### Cosa non usare in produzione TTR-SUITE
+- **qwen3:32b** — 5 tok/s su 16GB VRAM: inutilizzabile per uso interattivo
+- **qwen3:30b-a3b** — CPU/GPU split degradato, velocità e qualità compromesse su 16GB
+- **deepcoder:14b** — specializzato per codice, non porta vantaggi su task legali rispetto a gpt-oss:20b
 
 ---
 
 ## 5. Rischi e Limitazioni
 
-| Rischio | Mitigazione |
-|---------|------------|
-| Context window effettivo ~4-8K con 32B su 3090 | Usare KV cache quantizzata; chunking documenti lunghi |
-| Benchmark accademici non catturano qualità output legale reale | Integrare con test su documenti TTR-SUITE reali anonimizzati |
-| Thinking mode genera token extra → latenza percepita maggiore | Per batch processing è accettabile; per interattivo usare no-think o MoE |
-| Windows overhead su CUDA inference | Considerare WSL2+Ubuntu per migliorare ~5-10% |
-| LegalBench è su diritto USA, non italiano/europeo | Creare task supplementari su diritto italiano/GDPR/AI Act |
+| Rischio | Stato | Mitigazione |
+|---------|-------|-------------|
+| LegalBench floor ~8-21% per tutti i locali | **Confermato** | Accettare il gap; usare Claude API per task LegalBench-critici |
+| qwen3:32b inutilizzabile su 16GB | **Confermato** | Escluso; usare gpt-oss:20b o mistral-small |
+| CPU/GPU split su modelli >14GB | **Confermato** | Stare sotto 14GB per uso produttivo (gpt-oss:20b a 13GB è il limite) |
+| MMLU-Pro gap (37% local vs 62.5% Claude) | **Confermato** | Per ragionamento giuridico complesso usare sempre Claude API |
+| LegalBench è su diritto USA, non italiano/europeo | Aperto | Creare task supplementari su diritto italiano/GDPR/AI Act |
+| Benchmark accademici ≠ qualità output reale | Aperto | Integrare con test su documenti TTR-SUITE reali anonimizzati |
 
 ---
 
-## 6. File Prodotti
+## 6. Infrastruttura Benchmark
 
-| File | Contenuto |
-|------|-----------|
-| `LLM_Benchmark_Comparison_TTR_SUITE.xlsx` | Tabella comparativa completa (4 fogli) |
-| `LLM_Selection_Operativo_TTR_SUITE.md` | Questo documento |
-| Prompt Claude Code (sezione 7 sotto) | Per setup ed esecuzione benchmark con Ollama |
+La suite di benchmark è completamente implementata e riutilizzabile:
 
----
+| Componente | Path | Descrizione |
+|-----------|------|-------------|
+| Entry point | `benchmark/benchmark_runner.py` | `--quick`, `--dry-run`, `--resume`, `--no-pull` |
+| Configurazione | `benchmark/config.py` | Modelli, path, timeout — unica fonte di verità |
+| Output raw | `C:\TTR_Benchmark\results\raw_results_*.csv` | Una riga per task |
+| Consolidamento | `benchmark/consolidate_results.py` | XLSX 9 fogli: Accuracy, Throughput, LegalBench, CUAD, TTR-Score, Micro-heatmap, Rankings, TTR-Radar, Partial |
+| Checkpoint | `benchmark/checkpoints/{run_id}.json` | Resume automatico con `--resume` |
+| Risultati committati | `benchmark/results/` | CSV + XLSX versionate su GitHub |
 
-## 7. Prompt per Claude Code — Setup ed Esecuzione Benchmark
+### Aggiungere un nuovo modello
 
-Il prompt seguente è progettato per essere incollato direttamente in Claude Code. Genera l'intera infrastruttura di test su Windows 11 con Ollama.
+1. Aggiungere entry in `benchmark/config.py` (`MODELS` dict)
+2. Pull del modello tramite **Windows Ollama GUI** o `ollama.exe pull` (non da WSL)
+3. Lanciare: `python benchmark_runner.py --models nome-modello --no-pull`
+4. Consolidare: `python consolidate_results.py --results-dir /mnt/c/TTR_Benchmark/results`
 
----
-
-```
-CONTESTO:
-Sto selezionando un LLM locale per TTR-SUITE (piattaforma di analisi IP/contratti).
-Devo benchmarkare 3 modelli su RTX 3090 (24GB) Windows 11 con Ollama.
-I modelli sono:
-1. qwen3:32b-q4_K_M (con thinking mode ON)
-2. qwen3:30b-a3b (default q4)
-3. mistral-small:24b (default q4)
-
-OBIETTIVO:
-Creare uno script Python completo che:
-
-A) SETUP (una tantum):
-- Verifichi che Ollama sia installato e raggiungibile (localhost:11434)
-- Scarichi i 3 modelli se non presenti (ollama pull)
-- Crei la directory di lavoro C:\TTR_Benchmark\
-
-B) BENCHMARK 1 — LegalBench:
-- Cloni o scarichi il dataset LegalBench da https://github.com/HazyResearch/legalbench
-- Selezioni un sottoinsieme rappresentativo di task (minimo 20 task, coprendo tutte e 6 le categorie: issue-spotting, rule-recall, rule-conclusion, rule-application, interpretation, rhetorical-understanding)
-- Per ogni task, invii il prompt al modello via API Ollama (POST http://localhost:11434/api/chat)
-- Registri: risposta, tempo di risposta, token generati, tok/s
-- Confronti la risposta con il ground truth del dataset
-- Calcoli accuracy per task e per categoria
-
-C) BENCHMARK 2 — IFEval:
-- Scarichi il dataset IFEval da Hugging Face (google/IFEval)
-- Selezioni un campione di 50-100 prompt
-- Invii al modello e valuti la conformità alle istruzioni (strict e loose)
-- Registri metriche: prompt_level_strict_acc, inst_level_strict_acc
-
-D) BENCHMARK 3 — CUAD:
-- Scarichi il dataset CUAD da https://github.com/TheAtticusProject/cuad
-- Selezioni le categorie più rilevanti per IP: IP Ownership Assignment, Non-Compete, License Grant, Limitation of Liability, Indemnification, Termination for Convenience, Change of Control, Audit Rights (8 categorie su 41)
-- Per ogni clausola, chiedi al modello di identificare e estrarre la clausola rilevante dal contratto
-- Confronta con le annotazioni ground truth
-- Calcola F1-score per categoria
-
-E) BENCHMARK 4 — MMLU-Pro Law Subset:
-- Scarichi MMLU-Pro da Hugging Face
-- Filtra solo le domande della categoria "Law" e "Jurisprudence"
-- Invia come multiple-choice al modello
-- Calcola accuracy
-
-F) OUTPUT:
-- Genera un file CSV con tutti i risultati raw: modello, benchmark, task, risposta, ground_truth, corretto, tempo_ms, token_count, tok_s
-- Genera un file XLSX di riepilogo con:
-  - Foglio 1: Accuracy per modello per benchmark
-  - Foglio 2: Velocità media tok/s per modello
-  - Foglio 3: Dettaglio per categoria LegalBench
-  - Foglio 4: Dettaglio per categoria CUAD
-- Salva tutto in C:\TTR_Benchmark\results\
-
-VINCOLI TECNICI:
-- Windows 11, PowerShell o CMD
-- Python 3.11+, usa pip install per dipendenze
-- Ollama API su localhost:11434
-- RTX 3090 24GB, un solo modello alla volta in VRAM
-- Tra un modello e l'altro, scarica il precedente (ollama stop) per liberare VRAM
-- Per Qwen3-32B, abilita thinking mode (/think nel system prompt o enable_thinking=True)
-- Timeout per singola richiesta: 120 secondi (i documenti CUAD sono lunghi)
-- Se un benchmark richiede troppo tempo, implementa un --quick flag che riduce il campione a 10 task per benchmark
-
-QUALITÀ CODICE:
-- Codice production-ready con error handling
-- Logging con timestamp in un file .log
-- Possibilità di riprendere da dove si è interrotto (salva checkpoint dopo ogni task)
-- Progress bar con tqdm
-- Commenti in italiano
-```
+> **Nota:** Su questo sistema esistono **due istanze Ollama separate** (WSL e Windows). Il benchmark runner usa sempre Windows Ollama (localhost:11434 da Windows Python). Fare sempre pull dei modelli da Windows.
 
 ---
 
-*Fine documento — Aviolab AI, febbraio 2026*
+## 7. Modelli Pianificati / Da Testare
+
+| Modello | VRAM est. | Note |
+|---------|----------|------|
+| `qwen2.5-coder:14b` | ~9GB | Confronto diretto con deepcoder:14b su task legali |
+| `claude-sonnet-4-5` | — API | Confronto versione precedente vs 4.6 |
+| `gpt-4o-mini` | — API | Riferimento API low-cost |
+| `llama3.3:70b` | >16GB | Richiederebbe upgrade VRAM o offload |
+
+---
+
+*Aviolab AI — TTR-SUITE Benchmark Suite v1.0, febbraio 2026*
