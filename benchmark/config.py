@@ -47,6 +47,11 @@ MODELS: dict[str, dict] = {
         "tag":      "qwen3:32b-q4_K_M", # 20 GB — split CPU/GPU su 16GB VRAM (~3-22 tok/s)
         "thinking": False,
     },
+    "gpt-oss-20b": {
+        "provider": "ollama",
+        "tag":      "gpt-oss:20b",          # 13 GB — pure GPU su 16GB VRAM
+        "thinking": False,
+    },
     "mistral-small-24b": {
         "provider": "ollama",
         "tag":      "mistral-small:24b",
