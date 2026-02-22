@@ -1,0 +1,686 @@
+model,benchmark,task_id,category,prompt,response,ground_truth,is_correct,time_ms,tokens_generated,tok_s,thinking_tokens
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::0,issue-spotting,"A mark is generic if it is the common name for the product. A mark is descriptive if it describes a purpose, nature, or attribute of the product. A mark is suggestive if it suggests or implies a quality or characteristic of the product. A mark is arbitrary if it is a real English word that has no relation to the product. A mark is fanciful if it is an invented word.
+
+<example>
+Q: The mark ""Ivory"" for a product made of elephant tusks. What is the type of mark?
+A: generic
+</example>
+
+<example>
+Q: The mark ""Tasty"" for bread. What is the type of mark?
+A: descriptive
+</example>
+
+<example>
+Q: The mark ""Caress"" for body soap. What is the type of mark?
+A: suggestive
+</example>
+
+<example>
+Q: The mark ""Virgin"" for wireless communications. What is the type of mark?
+A: arbitrary
+</example>
+
+<example>
+Q: The mark ""Aswelly"" for a taxi service. What is the type of mark?
+A: fanciful
+</example>
+
+A:
+
+Q: The mark ""Ivory"" for a product made of elephant tusks. What is the type of mark?
+A:",generic,generic,True,1265,4,3.16,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::1,issue-spotting,"A mark is generic if it is the common name for the product. A mark is descriptive if it describes a purpose, nature, or attribute of the product. A mark is suggestive if it suggests or implies a quality or characteristic of the product. A mark is arbitrary if it is a real English word that has no relation to the product. A mark is fanciful if it is an invented word.
+
+<example>
+Q: The mark ""Ivory"" for a product made of elephant tusks. What is the type of mark?
+A: generic
+</example>
+
+<example>
+Q: The mark ""Tasty"" for bread. What is the type of mark?
+A: descriptive
+</example>
+
+<example>
+Q: The mark ""Caress"" for body soap. What is the type of mark?
+A: suggestive
+</example>
+
+<example>
+Q: The mark ""Virgin"" for wireless communications. What is the type of mark?
+A: arbitrary
+</example>
+
+<example>
+Q: The mark ""Aswelly"" for a taxi service. What is the type of mark?
+A: fanciful
+</example>
+
+A:
+
+Q: The mark ""Aswelly"" for a taxi service. What is the type of mark?
+A:",fanciful,fanciful,True,734,6,8.17,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::2,issue-spotting,"A mark is generic if it is the common name for the product. A mark is descriptive if it describes a purpose, nature, or attribute of the product. A mark is suggestive if it suggests or implies a quality or characteristic of the product. A mark is arbitrary if it is a real English word that has no relation to the product. A mark is fanciful if it is an invented word.
+
+<example>
+Q: The mark ""Ivory"" for a product made of elephant tusks. What is the type of mark?
+A: generic
+</example>
+
+<example>
+Q: The mark ""Tasty"" for bread. What is the type of mark?
+A: descriptive
+</example>
+
+<example>
+Q: The mark ""Caress"" for body soap. What is the type of mark?
+A: suggestive
+</example>
+
+<example>
+Q: The mark ""Virgin"" for wireless communications. What is the type of mark?
+A: arbitrary
+</example>
+
+<example>
+Q: The mark ""Aswelly"" for a taxi service. What is the type of mark?
+A: fanciful
+</example>
+
+A:
+
+Q: The mark ""Caress"" for body soap. What is the type of mark?
+A:",suggestive,suggestive,True,734,6,8.17,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::3,issue-spotting,"A mark is generic if it is the common name for the product. A mark is descriptive if it describes a purpose, nature, or attribute of the product. A mark is suggestive if it suggests or implies a quality or characteristic of the product. A mark is arbitrary if it is a real English word that has no relation to the product. A mark is fanciful if it is an invented word.
+
+<example>
+Q: The mark ""Ivory"" for a product made of elephant tusks. What is the type of mark?
+A: generic
+</example>
+
+<example>
+Q: The mark ""Tasty"" for bread. What is the type of mark?
+A: descriptive
+</example>
+
+<example>
+Q: The mark ""Caress"" for body soap. What is the type of mark?
+A: suggestive
+</example>
+
+<example>
+Q: The mark ""Virgin"" for wireless communications. What is the type of mark?
+A: arbitrary
+</example>
+
+<example>
+Q: The mark ""Aswelly"" for a taxi service. What is the type of mark?
+A: fanciful
+</example>
+
+A:
+
+Q: The mark ""Tasty"" for bread. What is the type of mark?
+A:",descriptive,descriptive,True,719,5,6.95,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::4,rule-recall,"Identify if the sentence defines a term.
+
+<example>
+Sentence: In my view, the term “threat” in § 875(c) can fairly *744 be defined as a statement that is reasonably interpreted as “an expression of an intention to inflict evil, injury, or damage on another.” Webster's Third New International Dictionary 2382 (1976).
+Label: Yes
+</example>
+
+<example>
+Sentence: An embargo is a “ [g]overnment order prohibiting commercial trade with individuals or businesses of other nations.” Black's Law Dictionary 468 (5th ed. 1979). It is “[a] policy which prevents goods from entering a nation” and which “may be imposed on a product or on an individual country.” J. Berenyi, The Modern American Business Dictionary 103 (1982). 
+Label: Yes
+</example>
+
+<example>
+Sentence: Bouvier defines ‘inspection’ as the examination of certain articles made by law subject to such examination, so that they may be declared fit for commerce.
+Label: Yes
+</example>
+
+<example>
+Sentence: To animadvert carried the broader implication of “turn[ing] the attention officially or judicially, tak[ing] legal cognizance of anything deserving of chastisement or censure; hence, to proceed by way of punishment or censure.” 1 Oxford English Dictionary 474 (2d ed.1989). 
+Label: Yes
+</example>
+
+<example>
+Sentence: See, e. g., Cal. Penal Code Ann. §1170 (West Supp. 2000).
+Label: No
+</example>
+
+<example>
+Sentence: Even if the Court’s broad reading of the phrase “at issue” were correct, the Court’s conclusion would still be wrong because the relinquishment provision is limited to property that is at issue “in claims against the United States.”
+Label: No
+</example>
+
+<example>
+Sentence: Pursuing this end, the Act set a minimum sales price for school trust lands of $3 per acre, 36 Stat. 574, the House committee report explaining:
+Label: No
+</example>
+
+<example>
+Sentence: As that paragraph plainly shows, we do not question and fully accept that insanity acquittees may be initially held without complying with the procedures applicab",Yes,Yes,True,764,4,5.24,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::5,rule-recall,"Identify if the sentence defines a term.
+
+<example>
+Sentence: In my view, the term “threat” in § 875(c) can fairly *744 be defined as a statement that is reasonably interpreted as “an expression of an intention to inflict evil, injury, or damage on another.” Webster's Third New International Dictionary 2382 (1976).
+Label: Yes
+</example>
+
+<example>
+Sentence: An embargo is a “ [g]overnment order prohibiting commercial trade with individuals or businesses of other nations.” Black's Law Dictionary 468 (5th ed. 1979). It is “[a] policy which prevents goods from entering a nation” and which “may be imposed on a product or on an individual country.” J. Berenyi, The Modern American Business Dictionary 103 (1982). 
+Label: Yes
+</example>
+
+<example>
+Sentence: Bouvier defines ‘inspection’ as the examination of certain articles made by law subject to such examination, so that they may be declared fit for commerce.
+Label: Yes
+</example>
+
+<example>
+Sentence: To animadvert carried the broader implication of “turn[ing] the attention officially or judicially, tak[ing] legal cognizance of anything deserving of chastisement or censure; hence, to proceed by way of punishment or censure.” 1 Oxford English Dictionary 474 (2d ed.1989). 
+Label: Yes
+</example>
+
+<example>
+Sentence: See, e. g., Cal. Penal Code Ann. §1170 (West Supp. 2000).
+Label: No
+</example>
+
+<example>
+Sentence: Even if the Court’s broad reading of the phrase “at issue” were correct, the Court’s conclusion would still be wrong because the relinquishment provision is limited to property that is at issue “in claims against the United States.”
+Label: No
+</example>
+
+<example>
+Sentence: Pursuing this end, the Act set a minimum sales price for school trust lands of $3 per acre, 36 Stat. 574, the House committee report explaining:
+Label: No
+</example>
+
+<example>
+Sentence: As that paragraph plainly shows, we do not question and fully accept that insanity acquittees may be initially held without complying with the procedures applicab",Yes,Yes,True,1078,4,3.71,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::6,rule-recall,"Identify if the sentence defines a term.
+
+<example>
+Sentence: In my view, the term “threat” in § 875(c) can fairly *744 be defined as a statement that is reasonably interpreted as “an expression of an intention to inflict evil, injury, or damage on another.” Webster's Third New International Dictionary 2382 (1976).
+Label: Yes
+</example>
+
+<example>
+Sentence: An embargo is a “ [g]overnment order prohibiting commercial trade with individuals or businesses of other nations.” Black's Law Dictionary 468 (5th ed. 1979). It is “[a] policy which prevents goods from entering a nation” and which “may be imposed on a product or on an individual country.” J. Berenyi, The Modern American Business Dictionary 103 (1982). 
+Label: Yes
+</example>
+
+<example>
+Sentence: Bouvier defines ‘inspection’ as the examination of certain articles made by law subject to such examination, so that they may be declared fit for commerce.
+Label: Yes
+</example>
+
+<example>
+Sentence: To animadvert carried the broader implication of “turn[ing] the attention officially or judicially, tak[ing] legal cognizance of anything deserving of chastisement or censure; hence, to proceed by way of punishment or censure.” 1 Oxford English Dictionary 474 (2d ed.1989). 
+Label: Yes
+</example>
+
+<example>
+Sentence: See, e. g., Cal. Penal Code Ann. §1170 (West Supp. 2000).
+Label: No
+</example>
+
+<example>
+Sentence: Even if the Court’s broad reading of the phrase “at issue” were correct, the Court’s conclusion would still be wrong because the relinquishment provision is limited to property that is at issue “in claims against the United States.”
+Label: No
+</example>
+
+<example>
+Sentence: Pursuing this end, the Act set a minimum sales price for school trust lands of $3 per acre, 36 Stat. 574, the House committee report explaining:
+Label: No
+</example>
+
+<example>
+Sentence: As that paragraph plainly shows, we do not question and fully accept that insanity acquittees may be initially held without complying with the procedures applicab",No,No,True,702,4,5.7,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::7,rule-recall,"Identify if the sentence defines a term.
+
+<example>
+Sentence: In my view, the term “threat” in § 875(c) can fairly *744 be defined as a statement that is reasonably interpreted as “an expression of an intention to inflict evil, injury, or damage on another.” Webster's Third New International Dictionary 2382 (1976).
+Label: Yes
+</example>
+
+<example>
+Sentence: An embargo is a “ [g]overnment order prohibiting commercial trade with individuals or businesses of other nations.” Black's Law Dictionary 468 (5th ed. 1979). It is “[a] policy which prevents goods from entering a nation” and which “may be imposed on a product or on an individual country.” J. Berenyi, The Modern American Business Dictionary 103 (1982). 
+Label: Yes
+</example>
+
+<example>
+Sentence: Bouvier defines ‘inspection’ as the examination of certain articles made by law subject to such examination, so that they may be declared fit for commerce.
+Label: Yes
+</example>
+
+<example>
+Sentence: To animadvert carried the broader implication of “turn[ing] the attention officially or judicially, tak[ing] legal cognizance of anything deserving of chastisement or censure; hence, to proceed by way of punishment or censure.” 1 Oxford English Dictionary 474 (2d ed.1989). 
+Label: Yes
+</example>
+
+<example>
+Sentence: See, e. g., Cal. Penal Code Ann. §1170 (West Supp. 2000).
+Label: No
+</example>
+
+<example>
+Sentence: Even if the Court’s broad reading of the phrase “at issue” were correct, the Court’s conclusion would still be wrong because the relinquishment provision is limited to property that is at issue “in claims against the United States.”
+Label: No
+</example>
+
+<example>
+Sentence: Pursuing this end, the Act set a minimum sales price for school trust lands of $3 per acre, 36 Stat. 574, the House committee report explaining:
+Label: No
+</example>
+
+<example>
+Sentence: As that paragraph plainly shows, we do not question and fully accept that insanity acquittees may be initially held without complying with the procedures applicab",Yes,Yes,True,781,4,5.12,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::8,rule-conclusion,"There is personal jurisdiction over a defendant in the state where the defendant is domiciled, or when (1) the defendant has sufficient contacts with the state, such that they have availed itself of the privileges of the state and (2) the claim arises out of the nexus of the defendant's contacts with the state.
+
+<example>
+Q: Dustin is a repairman who lives in Arizona and repairs computers in California, Oregon, and Washington. While traveling to repair a computer in Washington, Dustin is involved in a car crash in Oregon with Laura, a citizen of Oregon. After the accident, Dustin returns to Arizona. Laura sues him in Arizona. Is there personal jurisdiction?
+A: Yes
+</example>
+
+<example>
+Q: Tony (from Texas) is a regional manager for a cookbook company, Tasty Eats Books (incorporated and principal place of business in Delaware). Tony’s job requires him to travel from city to city to show new cookbooks to chefs. In January 2022, he was scheduled to visit restaurants in Illinois, Indiana, and Michigan (for the first time!). While in Michigan, Tony goes to Lake Erie to blow off some steam. He ends up getting into a fight with Arthur, a lawyer from Detroit, Michigan. Tony and Arthur each blame the other for starting the fight. Tony sues Arthur in Indiana. Is there personal jurisdiction?
+A: No
+</example>
+
+<example>
+Q: Martha makes special pinwheel hats in her home in Salem, Oregon. However, she maintains an extensive online presence, and markets her goods to citizens of all 50 states. Alex, a citizen of Maine, purchases one of the hats. The pinwheel comes off and seriously cuts Alex. Alex sues Martha for damages in Texas. Is there personal jurisdiction?
+A: No
+</example>
+
+<example>
+Q: Ana is a lawyer who resides in Texas. David, who runs a bike shop in Louisiana, emails Ana and tells her how great his bikes are. While visiting Louisiana, Ana buys a bike from David and rides it back home. Right after she crosses the border, the bike seat explodes, injuring Ana. Ana then sues",Yes,Yes,True,1984,4,2.02,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::9,rule-conclusion,"There is personal jurisdiction over a defendant in the state where the defendant is domiciled, or when (1) the defendant has sufficient contacts with the state, such that they have availed itself of the privileges of the state and (2) the claim arises out of the nexus of the defendant's contacts with the state.
+
+<example>
+Q: Dustin is a repairman who lives in Arizona and repairs computers in California, Oregon, and Washington. While traveling to repair a computer in Washington, Dustin is involved in a car crash in Oregon with Laura, a citizen of Oregon. After the accident, Dustin returns to Arizona. Laura sues him in Arizona. Is there personal jurisdiction?
+A: Yes
+</example>
+
+<example>
+Q: Tony (from Texas) is a regional manager for a cookbook company, Tasty Eats Books (incorporated and principal place of business in Delaware). Tony’s job requires him to travel from city to city to show new cookbooks to chefs. In January 2022, he was scheduled to visit restaurants in Illinois, Indiana, and Michigan (for the first time!). While in Michigan, Tony goes to Lake Erie to blow off some steam. He ends up getting into a fight with Arthur, a lawyer from Detroit, Michigan. Tony and Arthur each blame the other for starting the fight. Tony sues Arthur in Indiana. Is there personal jurisdiction?
+A: No
+</example>
+
+<example>
+Q: Martha makes special pinwheel hats in her home in Salem, Oregon. However, she maintains an extensive online presence, and markets her goods to citizens of all 50 states. Alex, a citizen of Maine, purchases one of the hats. The pinwheel comes off and seriously cuts Alex. Alex sues Martha for damages in Texas. Is there personal jurisdiction?
+A: No
+</example>
+
+<example>
+Q: Ana is a lawyer who resides in Texas. David, who runs a bike shop in Louisiana, emails Ana and tells her how great his bikes are. While visiting Louisiana, Ana buys a bike from David and rides it back home. Right after she crosses the border, the bike seat explodes, injuring Ana. Ana then sues",No,No,True,686,4,5.83,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::10,rule-conclusion,"There is personal jurisdiction over a defendant in the state where the defendant is domiciled, or when (1) the defendant has sufficient contacts with the state, such that they have availed itself of the privileges of the state and (2) the claim arises out of the nexus of the defendant's contacts with the state.
+
+<example>
+Q: Dustin is a repairman who lives in Arizona and repairs computers in California, Oregon, and Washington. While traveling to repair a computer in Washington, Dustin is involved in a car crash in Oregon with Laura, a citizen of Oregon. After the accident, Dustin returns to Arizona. Laura sues him in Arizona. Is there personal jurisdiction?
+A: Yes
+</example>
+
+<example>
+Q: Tony (from Texas) is a regional manager for a cookbook company, Tasty Eats Books (incorporated and principal place of business in Delaware). Tony’s job requires him to travel from city to city to show new cookbooks to chefs. In January 2022, he was scheduled to visit restaurants in Illinois, Indiana, and Michigan (for the first time!). While in Michigan, Tony goes to Lake Erie to blow off some steam. He ends up getting into a fight with Arthur, a lawyer from Detroit, Michigan. Tony and Arthur each blame the other for starting the fight. Tony sues Arthur in Indiana. Is there personal jurisdiction?
+A: No
+</example>
+
+<example>
+Q: Martha makes special pinwheel hats in her home in Salem, Oregon. However, she maintains an extensive online presence, and markets her goods to citizens of all 50 states. Alex, a citizen of Maine, purchases one of the hats. The pinwheel comes off and seriously cuts Alex. Alex sues Martha for damages in Texas. Is there personal jurisdiction?
+A: No
+</example>
+
+<example>
+Q: Ana is a lawyer who resides in Texas. David, who runs a bike shop in Louisiana, emails Ana and tells her how great his bikes are. While visiting Louisiana, Ana buys a bike from David and rides it back home. Right after she crosses the border, the bike seat explodes, injuring Ana. Ana then sues",No,No,True,1343,4,2.98,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::11,rule-conclusion,"There is personal jurisdiction over a defendant in the state where the defendant is domiciled, or when (1) the defendant has sufficient contacts with the state, such that they have availed itself of the privileges of the state and (2) the claim arises out of the nexus of the defendant's contacts with the state.
+
+<example>
+Q: Dustin is a repairman who lives in Arizona and repairs computers in California, Oregon, and Washington. While traveling to repair a computer in Washington, Dustin is involved in a car crash in Oregon with Laura, a citizen of Oregon. After the accident, Dustin returns to Arizona. Laura sues him in Arizona. Is there personal jurisdiction?
+A: Yes
+</example>
+
+<example>
+Q: Tony (from Texas) is a regional manager for a cookbook company, Tasty Eats Books (incorporated and principal place of business in Delaware). Tony’s job requires him to travel from city to city to show new cookbooks to chefs. In January 2022, he was scheduled to visit restaurants in Illinois, Indiana, and Michigan (for the first time!). While in Michigan, Tony goes to Lake Erie to blow off some steam. He ends up getting into a fight with Arthur, a lawyer from Detroit, Michigan. Tony and Arthur each blame the other for starting the fight. Tony sues Arthur in Indiana. Is there personal jurisdiction?
+A: No
+</example>
+
+<example>
+Q: Martha makes special pinwheel hats in her home in Salem, Oregon. However, she maintains an extensive online presence, and markets her goods to citizens of all 50 states. Alex, a citizen of Maine, purchases one of the hats. The pinwheel comes off and seriously cuts Alex. Alex sues Martha for damages in Texas. Is there personal jurisdiction?
+A: No
+</example>
+
+<example>
+Q: Ana is a lawyer who resides in Texas. David, who runs a bike shop in Louisiana, emails Ana and tells her how great his bikes are. While visiting Louisiana, Ana buys a bike from David and rides it back home. Right after she crosses the border, the bike seat explodes, injuring Ana. Ana then sues",Yes,Yes,True,781,4,5.12,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::12,rule-application,"Can the case can be used as a citation for the provided text?
+
+<example>
+Text: For hostile-work-environment claims, an employee must show that: ""(1) she belongs to a protected class; (2) she was subjected to harassment; (3) the harassment was based on sex; (4) the harassment affected a term, condition, or privilege of employment; and (5) the employer knew or should have known of the harassment and failed to take remedial action.""
+Citation: Saketkoo v. Admins. of Tulane Educ. Fund
+Supportive? Yes
+</example>
+
+<example>
+Text: [T]he law is settled that as a general matter the First Amendment prohibits government officials from subjecting an individual to retaliatory actions . . . for speaking out.
+Citation: Feist v. La., Dep't of Justice, Off. of the Att'y Gen.
+Supportive? No
+</example>
+
+Supportive? Reply with either: Yes, No
+
+Text: For hostile-work-environment claims, an employee must show that: ""(1) she belongs to a protected class; (2) she was subjected to harassment; (3) the harassment was based on sex; (4) the harassment affected a term, condition, or privilege of employment; and (5) the employer knew or should have known of the harassment and failed to take remedial action.""
+Citation: Saketkoo v. Admins. of Tulane Educ. Fund
+Supportive? Reply with either: Yes, No
+Answer:",Yes,Yes,True,1031,4,3.88,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::13,rule-application,"Can the case can be used as a citation for the provided text?
+
+<example>
+Text: For hostile-work-environment claims, an employee must show that: ""(1) she belongs to a protected class; (2) she was subjected to harassment; (3) the harassment was based on sex; (4) the harassment affected a term, condition, or privilege of employment; and (5) the employer knew or should have known of the harassment and failed to take remedial action.""
+Citation: Saketkoo v. Admins. of Tulane Educ. Fund
+Supportive? Yes
+</example>
+
+<example>
+Text: [T]he law is settled that as a general matter the First Amendment prohibits government officials from subjecting an individual to retaliatory actions . . . for speaking out.
+Citation: Feist v. La., Dep't of Justice, Off. of the Att'y Gen.
+Supportive? No
+</example>
+
+Supportive? Reply with either: Yes, No
+
+Text: [T]he law is settled that as a general matter the First Amendment prohibits government officials from subjecting an individual to retaliatory actions . . . for speaking out.
+Citation: Feist v. La., Dep't of Justice, Off. of the Att'y Gen.
+Supportive? Reply with either: Yes, No
+Answer:",No,No,True,1765,4,2.27,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::14,rule-application,"Task: diversity_1
+
+Ava is from Alaska. Mia is from Missouri. Ava sues Mia for wrongful eviction for $61,000.
+
+Answer:","# Diversity Jurisdiction Analysis
+
+## Requirements for Diversity Jurisdiction (28 U.S.C. § 1332)
+
+1. **Complete Diversity of Citizenship** between the parties
+2. **Amount in Controversy** exceeds **$75,000** (exclusive of interest and costs)
+
+---
+
+## Analysis
+
+### 1. Complete Diversity
+- **Ava** → Alaska citizen
+- **Mia** → Missouri citizen
+- ✅ **Diversity is satisfied** — the parties are citizens of different states
+
+### 2. Amount in Controversy
+- Ava's claim = **$61,000**
+- The requirement is that the amount **exceed $75,000**
+- ❌ **$61,000 does NOT exceed $75,000**
+
+---
+
+## Conclusion
+
+**Federal diversity jurisdiction does NOT exist** in this case.
+
+Although complete diversity is present, the amount in controversy fails to satisfy the statutory threshold — it falls **$14,000 short** of the required amount. A federal court would therefore **lack subject matter jurisdiction**, and the case could **not be heard in federal court** on diversity grounds. Ava would need to bring her claim in **state court**.",No,False,6172,273,44.23,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::15,rule-application,"Task: diversity_1
+
+Isabella is from Alaska. Elijah is from Montana. Isabella sues Elijah for patent infringement for $1,522,000.
+
+Answer:","# Federal Court Jurisdiction Analysis
+
+## Applicable Jurisdictional Bases
+
+### 1. Federal Question Jurisdiction (28 U.S.C. § 1331)
+Patent infringement claims **arise under federal law** (35 U.S.C. § 271), giving federal district courts **federal question jurisdiction** regardless of any other factors.
+
+### 2. Diversity Jurisdiction (28 U.S.C. § 1332)
+Even setting aside federal question jurisdiction, diversity jurisdiction is also satisfied:
+
+| Element | Requirement | Facts |
+|---|---|---|
+| **Citizenship of Plaintiff** | Diverse from Defendant | Isabella – **Alaska** |
+| **Citizenship of Defendant** | Diverse from Plaintiff | Elijah – **Montana** |
+| **Complete Diversity** | No shared state citizenship | ✅ Satisfied |
+| **Amount in Controversy** | Exceeds **$75,000** | $1,522,000 ✅ |
+
+## Conclusion
+
+Federal courts have jurisdiction under **both** grounds:
+- ✅ **Federal Question** (patent law is exclusively federal)
+- ✅ **Diversity of Citizenship** (AK vs. MT; $1,522,000 > $75,000)
+
+> **Note:** Patent cases must be brought in **federal court** under 28 U.S.C. § 1338(a), which grants federal courts *exclusive* jurisdiction over patent matters.",Yes,False,6968,338,48.51,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::16,interpretation,"When one company sells its assets to another company, the purchaser is generally not liable for the seller’s debts and liabilities. There are four exceptions: 
+
+1. the purchaser expressly agrees to be held liable (express agreement)
+
+2. the assets are fraudulently conveyed to the purchaser in order to avoid liability (fraudulent conveyance)
+
+3. there is a de facto merger between the purchaser and seller (de facto merger)
+
+4. the purchaser is a mere continuation of the seller (mere continuation)
+
+For the following fact patterns, determine which exceptions apply.
+
+<example>
+Facts: Big Chemical Corp purchased substantially all of Small Chemical Corp's assets three years ago. The purchase agreement included a provision that Big Chemical would assume Small Chemical's liabilities only to the extent necessary to continue its operations. Following the asset purhcase, Small Chemical's directors assumed directorships on Big Chemical's board. Residents of a town where Small Chemical had a factory now bring suit against Big Chemical for harm that occured several years prior to the asset purchase.
+Exceptions: de facto merger, mere continuation
+</example>
+
+<example>
+Facts: Home Builders III purchased substantially all of Home Builders II's assets. The purchase agreement contained no provision for assumption of any liabilities. Home Builders II had built several thousand defective homes. Home Builders III was made aware of this fact during negotiations even though no claims had been brought against Home Builders II at the time. Following the asset sale, Home Builders III maintained the same offices, employees, and management.  Customers of Home Builders II bring suit against Home Builders III several years later after they discover defects in their homes.
+Exceptions: mere continuation,fraudulent conveyance
+</example>
+
+<example>
+Facts: Mediocre Corp purchased all of Special Corp's assets. The purchase agreement provides for assumption of all of Special Corp's liabilities. Following","Express agreement
+
+The purchase agreement explicitly provides for the assumption of **all** of Special Corp's liabilities, which directly satisfies the express agreement exception. While there are some facts that might suggest a mere continuation argument (Mediocre Corp holding itself out as Special Corp and Special Corp's dissolution), the express agreement exception alone is sufficient to establish liability here, and the example above with identical facts confirms that only express agreement applies.",express agreement,True,2905,90,30.98,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::17,interpretation,"When one company sells its assets to another company, the purchaser is generally not liable for the seller’s debts and liabilities. There are four exceptions: 
+
+1. the purchaser expressly agrees to be held liable (express agreement)
+
+2. the assets are fraudulently conveyed to the purchaser in order to avoid liability (fraudulent conveyance)
+
+3. there is a de facto merger between the purchaser and seller (de facto merger)
+
+4. the purchaser is a mere continuation of the seller (mere continuation)
+
+For the following fact patterns, determine which exceptions apply.
+
+<example>
+Facts: Big Chemical Corp purchased substantially all of Small Chemical Corp's assets three years ago. The purchase agreement included a provision that Big Chemical would assume Small Chemical's liabilities only to the extent necessary to continue its operations. Following the asset purhcase, Small Chemical's directors assumed directorships on Big Chemical's board. Residents of a town where Small Chemical had a factory now bring suit against Big Chemical for harm that occured several years prior to the asset purchase.
+Exceptions: de facto merger, mere continuation
+</example>
+
+<example>
+Facts: Home Builders III purchased substantially all of Home Builders II's assets. The purchase agreement contained no provision for assumption of any liabilities. Home Builders II had built several thousand defective homes. Home Builders III was made aware of this fact during negotiations even though no claims had been brought against Home Builders II at the time. Following the asset sale, Home Builders III maintained the same offices, employees, and management.  Customers of Home Builders II bring suit against Home Builders III several years later after they discover defects in their homes.
+Exceptions: mere continuation,fraudulent conveyance
+</example>
+
+<example>
+Facts: Mediocre Corp purchased all of Special Corp's assets. The purchase agreement provides for assumption of all of Special Corp's liabilities. Following","Based on the facts provided, the applicable exceptions are:
+
+**De Facto Merger** and **Mere Continuation**
+
+**De Facto Merger**: Although this was structured as an asset purchase rather than a formal merger, the transaction has the hallmarks of a de facto merger. Big Chemical purchased *substantially all* of Small Chemical's assets, and Small Chemical's directors assumed directorships on Big Chemical's board, indicating a continuity of ownership and management structure characteristic of a merger.
+
+**Mere Continuation**: The facts support this exception as well. The overlap in directors between Small Chemical and Big Chemical — with Small Chemical's directors moving to Big Chemical's board following the transaction — suggests that Big Chemical is essentially a continuation of Small Chemical under a different name, with the same leadership carrying on the same enterprise.
+
+**Notes on inapplicable exceptions**:
+- **Express Agreement** does not apply because the purchase agreement *limited* assumption of liabilities to those necessary to continue operations, rather than broadly assuming all liabilities.
+- **Fraudulent Conveyance** does not appear to apply as there are no facts suggesting the asset purchase was structured to fraudulently avoid liability.","de facto merger,mere continuation",True,4890,252,51.53,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::18,interpretation,"When one company sells its assets to another company, the purchaser is generally not liable for the seller’s debts and liabilities. There are four exceptions: 
+
+1. the purchaser expressly agrees to be held liable (express agreement)
+
+2. the assets are fraudulently conveyed to the purchaser in order to avoid liability (fraudulent conveyance)
+
+3. there is a de facto merger between the purchaser and seller (de facto merger)
+
+4. the purchaser is a mere continuation of the seller (mere continuation)
+
+For the following fact patterns, determine which exceptions apply.
+
+<example>
+Facts: Big Chemical Corp purchased substantially all of Small Chemical Corp's assets three years ago. The purchase agreement included a provision that Big Chemical would assume Small Chemical's liabilities only to the extent necessary to continue its operations. Following the asset purhcase, Small Chemical's directors assumed directorships on Big Chemical's board. Residents of a town where Small Chemical had a factory now bring suit against Big Chemical for harm that occured several years prior to the asset purchase.
+Exceptions: de facto merger, mere continuation
+</example>
+
+<example>
+Facts: Home Builders III purchased substantially all of Home Builders II's assets. The purchase agreement contained no provision for assumption of any liabilities. Home Builders II had built several thousand defective homes. Home Builders III was made aware of this fact during negotiations even though no claims had been brought against Home Builders II at the time. Following the asset sale, Home Builders III maintained the same offices, employees, and management.  Customers of Home Builders II bring suit against Home Builders III several years later after they discover defects in their homes.
+Exceptions: mere continuation,fraudulent conveyance
+</example>
+
+<example>
+Facts: Mediocre Corp purchased all of Special Corp's assets. The purchase agreement provides for assumption of all of Special Corp's liabilities. Following","mere continuation, fraudulent conveyance","mere continuation,fraudulent conveyance",True,813,11,13.53,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::19,interpretation,"Label ""Yes"" if the paragraph interprets a statue using a dictionary definition for terms in the statute. The paragraph must reference that it is using a dictionary, or discuss the logic behind using a dictionary. Otherwise label ""No"".
+
+<example>
+Text: the texas code does not define election laws, and we have found no case construing this phrase. thus, we first look to the ordinary, contemporary, common meaning of election laws. see perrin v. united states, 444 u.s. 37, 42, 100 s.ct. 311, 314, 62 l.ed.2d 199 (1979) (noting that it is a fundamental canon of statutory construction ... that, unless otherwise defined, words will be interpreted as taking their ordinary, contemporary, common meaning). we think that the common meaning of election laws is laws that specifically govern elections, rather than generally applicable laws that may affect elections. if the texas legislature wanted 31.003 to cover the latter, we doubt that it would have inserted the adjectival modifier election directly before the noun law. by forming an open compound phrase such as election law, the texas legislature meant a combination of separate words that are so closely related as to constitute a single concept. chicago manual of style 6.33 (14th rev. ed. 1993). an election district, for instance, is not a district devised for many functions, including elections; it is a district created for the purposes of elections. 5 oxford english dictionary 116 (2d ed. 1989). moreover, an election board is not an agency that carries out all the responsibilities of a municipality, including elections; it is an agency charged with the conduct of elections. blacks law dictionary 519 (6th ed.1990).
+Label: Yes
+</example>
+
+<example>
+Text: however, lederman does not cite, nor have we found, any minnesota decision that applies 541.051, subd. 1(c) to actions against an owner for injuries incurred during construction. indeed, the statutory language cautions against such a reading. section 541.051, subd. l(c)s refere",No,No,True,1156,4,3.46,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::20,rhetorical-understanding,"Classify the function that the question serves. Options: Background, Clarification, Communicate, Criticism, Humor, Implications, Support
+
+<example>
+Question: So, counsel, we've spoken a little bit about how Colorado has handled this compelled speech question differently with respect to different messages, some that it prefers, others that it dislikes. I'm curious how other states have dealt with this conundrum besides Colorado and how you -- which ones of those you think we should take account of.
+Answer: Background
+</example>
+
+<example>
+Question: Is that -- do you understand that to be part of the stipulations or not?
+Answer: Clarification
+</example>
+
+<example>
+Question: Last question. This might be what Justice Kagan was asking, but it might be something different. The -- if you have to intervene before you move to dismiss -- and so, if this is repetitive, I apologize -- the D.C. Circuit said that would be largely academic, that requirement, if you had to intervene before moving to dismiss. Do you agree with that? I mean, in other words, it doesn't matter one way or the other.
+Answer: Communicate
+</example>
+
+<example>
+Question: Even though the site doesn't say anything about that? It doesn't say, wow, gay marriage is a wonderful thing. It *41 doesn't say -- it doesn't even say, you know, we're here to celebrate this wonderful marriage in my hypothetical. It doesn't even say that.
+Answer: Criticism
+</example>
+
+<example>
+Question: I mean, it does seem a little bit like due process Lochnerism for corporations here, doesn't it?
+Answer: Humor
+</example>
+
+<example>
+Question: Do they have to -- can you compel that speech? Do they have to publish it?
+Answer: Implications
+</example>
+
+<example>
+Question: Ms. Hansford, I think everyone might be underselling Steele here. I mean, it's true what Justice Alito says about this first sentence sets up the question in an odd way. But the actual holding and heart of the opinion is on page 286, and that's where the Court says -- it sa",Clarification,Clarification,True,797,6,7.53,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::21,rhetorical-understanding,"Classify the function that the question serves. Options: Background, Clarification, Communicate, Criticism, Humor, Implications, Support
+
+<example>
+Question: So, counsel, we've spoken a little bit about how Colorado has handled this compelled speech question differently with respect to different messages, some that it prefers, others that it dislikes. I'm curious how other states have dealt with this conundrum besides Colorado and how you -- which ones of those you think we should take account of.
+Answer: Background
+</example>
+
+<example>
+Question: Is that -- do you understand that to be part of the stipulations or not?
+Answer: Clarification
+</example>
+
+<example>
+Question: Last question. This might be what Justice Kagan was asking, but it might be something different. The -- if you have to intervene before you move to dismiss -- and so, if this is repetitive, I apologize -- the D.C. Circuit said that would be largely academic, that requirement, if you had to intervene before moving to dismiss. Do you agree with that? I mean, in other words, it doesn't matter one way or the other.
+Answer: Communicate
+</example>
+
+<example>
+Question: Even though the site doesn't say anything about that? It doesn't say, wow, gay marriage is a wonderful thing. It *41 doesn't say -- it doesn't even say, you know, we're here to celebrate this wonderful marriage in my hypothetical. It doesn't even say that.
+Answer: Criticism
+</example>
+
+<example>
+Question: I mean, it does seem a little bit like due process Lochnerism for corporations here, doesn't it?
+Answer: Humor
+</example>
+
+<example>
+Question: Do they have to -- can you compel that speech? Do they have to publish it?
+Answer: Implications
+</example>
+
+<example>
+Question: Ms. Hansford, I think everyone might be underselling Steele here. I mean, it's true what Justice Alito says about this first sentence sets up the question in an odd way. But the actual holding and heart of the opinion is on page 286, and that's where the Court says -- it sa",Criticism,Criticism,True,1093,5,4.57,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::22,rhetorical-understanding,"Classify the function that the question serves. Options: Background, Clarification, Communicate, Criticism, Humor, Implications, Support
+
+<example>
+Question: So, counsel, we've spoken a little bit about how Colorado has handled this compelled speech question differently with respect to different messages, some that it prefers, others that it dislikes. I'm curious how other states have dealt with this conundrum besides Colorado and how you -- which ones of those you think we should take account of.
+Answer: Background
+</example>
+
+<example>
+Question: Is that -- do you understand that to be part of the stipulations or not?
+Answer: Clarification
+</example>
+
+<example>
+Question: Last question. This might be what Justice Kagan was asking, but it might be something different. The -- if you have to intervene before you move to dismiss -- and so, if this is repetitive, I apologize -- the D.C. Circuit said that would be largely academic, that requirement, if you had to intervene before moving to dismiss. Do you agree with that? I mean, in other words, it doesn't matter one way or the other.
+Answer: Communicate
+</example>
+
+<example>
+Question: Even though the site doesn't say anything about that? It doesn't say, wow, gay marriage is a wonderful thing. It *41 doesn't say -- it doesn't even say, you know, we're here to celebrate this wonderful marriage in my hypothetical. It doesn't even say that.
+Answer: Criticism
+</example>
+
+<example>
+Question: I mean, it does seem a little bit like due process Lochnerism for corporations here, doesn't it?
+Answer: Humor
+</example>
+
+<example>
+Question: Do they have to -- can you compel that speech? Do they have to publish it?
+Answer: Implications
+</example>
+
+<example>
+Question: Ms. Hansford, I think everyone might be underselling Steele here. I mean, it's true what Justice Alito says about this first sentence sets up the question in an odd way. But the actual holding and heart of the opinion is on page 286, and that's where the Court says -- it sa",Humor,Humor,True,827,5,6.05,0
+claude-sonnet-4-6,legalbench,legalbench::claude-sonnet-4-6::23,rhetorical-understanding,"Classify the function that the question serves. Options: Background, Clarification, Communicate, Criticism, Humor, Implications, Support
+
+<example>
+Question: So, counsel, we've spoken a little bit about how Colorado has handled this compelled speech question differently with respect to different messages, some that it prefers, others that it dislikes. I'm curious how other states have dealt with this conundrum besides Colorado and how you -- which ones of those you think we should take account of.
+Answer: Background
+</example>
+
+<example>
+Question: Is that -- do you understand that to be part of the stipulations or not?
+Answer: Clarification
+</example>
+
+<example>
+Question: Last question. This might be what Justice Kagan was asking, but it might be something different. The -- if you have to intervene before you move to dismiss -- and so, if this is repetitive, I apologize -- the D.C. Circuit said that would be largely academic, that requirement, if you had to intervene before moving to dismiss. Do you agree with that? I mean, in other words, it doesn't matter one way or the other.
+Answer: Communicate
+</example>
+
+<example>
+Question: Even though the site doesn't say anything about that? It doesn't say, wow, gay marriage is a wonderful thing. It *41 doesn't say -- it doesn't even say, you know, we're here to celebrate this wonderful marriage in my hypothetical. It doesn't even say that.
+Answer: Criticism
+</example>
+
+<example>
+Question: I mean, it does seem a little bit like due process Lochnerism for corporations here, doesn't it?
+Answer: Humor
+</example>
+
+<example>
+Question: Do they have to -- can you compel that speech? Do they have to publish it?
+Answer: Implications
+</example>
+
+<example>
+Question: Ms. Hansford, I think everyone might be underselling Steele here. I mean, it's true what Justice Alito says about this first sentence sets up the question in an odd way. But the actual holding and heart of the opinion is on page 286, and that's where the Court says -- it sa",Communicate,Communicate,True,813,5,6.15,0

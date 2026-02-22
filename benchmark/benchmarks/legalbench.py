@@ -16,13 +16,23 @@ Categories
 Each category maps to one or more task sub-directories inside the repo,
 each containing a ``test.tsv`` or ``test.csv`` file with at minimum the
 columns ``text`` and ``answer``.
+
+Prompt strategy
+---------------
+Each LegalBench task ships a ``claude_prompt.txt`` with rules, taxonomy and
+few-shot examples.  When present, ``build_prompt`` uses it as preamble and
+appends the new item in the task-specific format, ensuring the model knows
+what label vocabulary to use.  Tasks without a claude_prompt fall back to
+the original bare-prompt format.
 """
 
 from __future__ import annotations
 
 import csv
 import random
+import re
 from pathlib import Path
+from functools import lru_cache
 
 import git  # gitpython
 
@@ -31,6 +41,10 @@ from benchmarks.base import BenchmarkBase
 from src.logger import setup_logger
 
 log = setup_logger(__name__)
+
+# ── Reproducible sampling ──────────────────────────────────────────────────────
+# Fixed seed so every run samples the same items from each task file.
+SAMPLE_SEED = 42
 
 # Mapping from our 6 categories → known LegalBench task directory names.
 # The actual repo contains 162 tasks; we select representative ones.
@@ -78,6 +92,28 @@ CATEGORY_TASKS: dict[str, list[str]] = {
     ],
 }
 
+# How to present the current item when a claude_prompt.txt preamble is used.
+# {text} is replaced with item["text"]; {citation} with item.get("citation","").
+TASK_ITEM_FORMAT: dict[str, str] = {
+    # issue-spotting
+    "oral_argument_question_purpose":     "Question: {text}\nAnswer:",
+    "abercrombie":                         "Q: {text} What is the type of mark?\nA:",
+    # rule-recall
+    "definition_classification":           "Sentence: {text}\nLabel:",
+    # rule-application
+    "citation_prediction_classification":  "Text: {text}\nCitation: {citation}\nSupportive? Reply with either: Yes, No\nAnswer:",
+    # interpretation
+    "textualism_tool_dictionaries":        "Text: {text}\nReply with either: Yes, No\nLabel:",
+    "textualism_tool_plain":               "Text: {text}\nReply with either: Yes, No\nLabel:",
+    "successor_liability":                 "Facts: {text}\nExceptions:",
+    # rhetorical-understanding
+    "function_of_decision_section":        "Text: {text}\nLabel:",
+    # rule-conclusion
+    "personal_jurisdiction":               "Q: {text} Is there personal jurisdiction? Reply with either: Yes, No\nA:",
+    "canada_tax_court_outcomes":           "JUDGMENT EXCERPT: {text} Reply with either: allowed, dismissed, other\nOUTCOME:",
+    "proa":                                "Clause: {text} Reply with either: Yes, No\nA:",
+}
+
 
 class LegalBenchBenchmark(BenchmarkBase):
     name = "legalbench"
@@ -103,13 +139,17 @@ class LegalBenchBenchmark(BenchmarkBase):
 
         Normal:  4 items per category = 24 total
         Quick:   2 items per category = 12 total
+
+        Sampling is seeded (SAMPLE_SEED) for reproducibility.
         """
         n_per_cat = 2 if quick else 4
         items: list[dict] = []
         idx = 0
 
+        rng = random.Random(SAMPLE_SEED)
+
         for category, task_names in CATEGORY_TASKS.items():
-            cat_items = self._load_category(category, task_names, n_per_cat)
+            cat_items = self._load_category(category, task_names, n_per_cat, rng)
             for item in cat_items:
                 item["_idx"]     = idx
                 item["category"] = category
@@ -119,10 +159,29 @@ class LegalBenchBenchmark(BenchmarkBase):
         return items
 
     def build_prompt(self, item: dict) -> str:
-        task_name = item.get("task_name", "legal task")
+        """
+        Build prompt for *item*.
+
+        If a ``claude_prompt.txt`` exists for the task, prepend it as a
+        preamble (rules + few-shot examples) and append the item in the
+        task-specific format so the model knows the expected label vocabulary.
+        Otherwise fall back to the original bare format.
+        """
+        task_name  = item.get("task_name", "legal task")
+        text       = item.get("text", "")
+        citation   = item.get("citation", "")
+
+        preamble = _load_claude_prompt(task_name, self._repo_dir)
+        fmt      = TASK_ITEM_FORMAT.get(task_name)
+
+        if preamble and fmt:
+            item_str = fmt.format(text=text, citation=citation)
+            return f"{preamble}\n\n{item_str}"
+
+        # Fallback: original bare prompt
         return (
             f"Task: {task_name}\n\n"
-            f"{item['text']}\n\n"
+            f"{text}\n\n"
             "Answer:"
         )
 
@@ -135,11 +194,16 @@ class LegalBenchBenchmark(BenchmarkBase):
             return 1.0
         # 2. GT is contained as a whole word in the prediction
         #    (model answered correctly but with extra explanation)
-        import re
         if re.search(r'\b' + re.escape(gt) + r'\b', pred):
             return 1.0
         # 3. Prediction starts with GT (e.g. "yes, because...")
         if pred.startswith(gt):
+            return 1.0
+        # 4. Multi-label GT (comma-separated): all labels must appear
+        labels = [l.strip() for l in gt.split(',') if l.strip()]
+        if len(labels) > 1 and all(
+            re.search(r'\b' + re.escape(l) + r'\b', pred) for l in labels
+        ):
             return 1.0
         return 0.0
 
@@ -150,13 +214,11 @@ class LegalBenchBenchmark(BenchmarkBase):
         category: str,
         task_names: list[str],
         n: int,
+        rng: random.Random,
     ) -> list[dict]:
         """
         Try each task in *task_names* until we collect *n* items.
-
-        The LegalBench repo layout:
-          legalbench/tasks/<task_name>/base_task.csv   (or test.csv / data.csv)
-        Each file has at least ``text`` and ``answer`` columns.
+        Uses *rng* for reproducible sampling.
         """
         collected: list[dict] = []
         tasks_dir = self._repo_dir / "tasks"
@@ -176,8 +238,8 @@ class LegalBenchBenchmark(BenchmarkBase):
                 continue
 
             rows = _read_tsv_or_csv(data_file)
-            need = n - len(collected)
-            sample = random.sample(rows, min(need, len(rows))) if rows else []
+            need   = n - len(collected)
+            sample = rng.sample(rows, min(need, len(rows))) if rows else []
             for row in sample:
                 row["task_name"] = task_name
             collected.extend(sample)
@@ -199,7 +261,6 @@ def _find_data_file(task_dir: Path) -> Path | None:
         candidate = task_dir / name
         if candidate.exists():
             return candidate
-    # Fall back to any CSV/TSV
     for ext in ("*.csv", "*.tsv"):
         found = list(task_dir.glob(ext))
         if found:
@@ -215,14 +276,15 @@ def _read_tsv_or_csv(path: Path) -> list[dict]:
         with path.open(encoding="utf-8", newline="") as fh:
             reader = csv.DictReader(fh, delimiter=delimiter)
             for row in reader:
-                # Normalise common column names
+                # Normalise column names to lowercase
                 item: dict = {}
                 for key, val in row.items():
                     k = key.strip().lower()
                     item[k] = val.strip() if isinstance(val, str) else val
-                # Normalise: accept 'question' as alias for 'text'
-                if "question" in item and "text" not in item:
-                    item["text"] = item["question"]
+                # Column aliases → 'text'
+                for alias in ("question", "paragraph"):
+                    if alias in item and "text" not in item:
+                        item["text"] = item[alias]
                 # Must have 'text' and 'answer'
                 if "text" in item and "answer" in item:
                     rows.append(item)
@@ -230,6 +292,27 @@ def _read_tsv_or_csv(path: Path) -> list[dict]:
     except Exception as exc:  # noqa: BLE001
         log.warning("Could not read %s: %s", path, exc)
         return []
+
+
+@lru_cache(maxsize=64)
+def _load_claude_prompt(task_name: str, repo_dir: Path) -> str | None:
+    """Load and cache the claude_prompt.txt for *task_name*, or None."""
+    p = repo_dir / "tasks" / task_name / "claude_prompt.txt"
+    if not p.exists():
+        return None
+    text = p.read_text(encoding="utf-8").strip()
+    # Strip trailing placeholder lines like "Text: {{text}}" —
+    # we'll append the item ourselves via TASK_ITEM_FORMAT.
+    lines = text.splitlines()
+    clean = []
+    for line in lines:
+        if "{{text}}" in line or "{{citation}}" in line:
+            continue
+        clean.append(line)
+    # Remove trailing blank lines
+    while clean and not clean[-1].strip():
+        clean.pop()
+    return "\n".join(clean) if clean else None
 
 
 def _normalize(s: str) -> str:
