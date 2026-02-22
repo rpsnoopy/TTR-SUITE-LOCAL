@@ -52,6 +52,11 @@ MODELS: dict[str, dict] = {
         "tag":      "gpt-oss:20b",          # 13 GB — pure GPU su 16GB VRAM
         "thinking": False,
     },
+    "deepcoder-14b": {
+        "provider": "ollama",
+        "tag":      "deepcoder:latest",     # 9 GB — pure GPU su 16GB VRAM; DeepSeek-R1-Distilled reasoning
+        "thinking": False,
+    },
     "mistral-small-24b": {
         "provider": "ollama",
         "tag":      "mistral-small:24b",
