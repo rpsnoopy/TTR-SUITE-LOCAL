@@ -41,9 +41,15 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 
 ### Note metodologiche
 
-**LegalBench v2:** i risultati iniziali (v1, 8–37%) erano affetti da prompt inadeguati — il runner ignorava i `claude_prompt.txt` con regole e few-shot forniti da LegalBench. Corretti i prompt, tutti i modelli migliorano drasticamente (+54–83 pp). Tutti i modelli ri-testati con i prompt corretti.
+**LegalBench v2:** i risultati iniziali (v1, 8–37%) erano affetti da prompt inadeguati — il runner ignorava i `claude_prompt.txt` con regole e few-shot forniti da LegalBench. Corretti i prompt, tutti i modelli migliorano drasticamente (+54–83 pp). Tutti i modelli ri-testati con i prompt corretti. Seed riproducibile (42).
 
-**MMLU-Pro v2:** i risultati iniziali erano invalidi per i modelli con thinking mode implicito (Qwen3, gpt-oss): `num_predict=1024` esauriva il budget sui ragionamenti interni, lasciando risposte vuote (74–84% di risposte vuote per Qwen3). Corretto con `num_predict=4096` per MMLU-Pro. Tutti i modelli ri-testati con il parametro corretto e seed riproducibile.
+**MMLU-Pro v2:** i risultati iniziali erano invalidi per i modelli con thinking mode implicito (Qwen3, gpt-oss): `num_predict=1024` esauriva il budget sui ragionamenti interni, lasciando risposte vuote (74–84% di risposte vuote per Qwen3). Corretto con `num_predict=4096` per MMLU-Pro. Tutti i modelli ri-testati con il parametro corretto e seed riproducibile (42). Validazione audit: 0 risposte vuote nel dataset finale, tutte le risposte sono lettere A–J (MMLU-Pro ha 10 opzioni).
+
+**CUAD — meccanica di scoring chiarita (audit post-hoc):** Il dataset `filtered-cuad` include sia item con clausola presente (53.4%) sia item con clausola assente (46.6%). Per gli item senza clausola, il ground truth è impostato a `"NESSUNA CLAUSOLA PRESENTE"` — i modelli che rispondono esattamente con questa frase ottengono F1=1.0. Questo spiega i punteggi 46–54%: la componente principale è il corretto riconoscimento degli item senza clausola. L'F1 è binario (0 o 1) perché i modelli estraggono il testo in modo esatto o lo mancano completamente.
+
+**CUAD — limitazione: assenza di seed (nota):** Il campionamento dei 10 item per categoria avviene senza seed fisso → ogni run usa item diversi → i punteggi CUAD non sono confrontabili item-per-item tra modelli. L'impatto stimato è ±2–3 pp di varianza da campionamento (624 item totali, 78 per categoria, 46–53% split positivo/negativo per categoria). Il ranking relativo rimane valido.
+
+**phi4 CUAD — revisione diagnosi:** phi4 non è "troppo conservativo" ma **non segue l'istruzione "SOLO l'estratto"**: aggiunge testo esplicativo dopo "NESSUNA CLAUSOLA PRESENTE", abbassando la precision dell'F1 a quasi zero anche sugli item senza clausola (dove altri modelli ottengono F1=1.0). Se rispondesse concisamente, otterrebbe circa 37–38% solo dagli item senza clausola. Risultato: 3.8% = capacità di estrazione scarsa + istruzione di formato non rispettata.
 
 ### Tabella risultati finali
 
@@ -60,7 +66,7 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 
 > *qwen3:30b-a3b → CPU/GPU split su 16GB, velocità degradata
 > ⛔ qwen3:32b interrotto: 5 tok/s inaccettabile (CPU/GPU split su 16GB)
-> ¹ phi4:14b CUAD: il modello risponde "nessuna clausola presente" nel 96% dei casi (77/80 item) — estrema conservatività nell'estrazione → F1 quasi zero
+> ¹ phi4:14b CUAD: non segue l'istruzione "SOLO l'estratto" — aggiunge testo esplicativo che abbassa l'F1 a quasi zero. Score corretto se formato rispettato: ~37–38%
 
 ### Gap rispetto a Claude Sonnet 4.6
 
@@ -109,6 +115,8 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 | LegalBench è su diritto USA, non italiano/europeo | Aperto | Creare task supplementari su diritto italiano/GDPR/AI Act |
 | Benchmark accademici ≠ qualità output reale | Aperto | Integrare con test su documenti TTR-SUITE reali anonimizzati |
 | qwen3:14b genera ~2500 tok/thinking su MMLU-Pro (~65s/domanda) | Aperto | Accettabile per uso batch; per uso interattivo considerare `/no_think` |
+| CUAD: campionamento senza seed fisso → run diversi su item diversi | Noto | Aggiungere SAMPLE_SEED=42 e ri-eseguire per perfetta comparabilità; impatto stimato ±2–3 pp |
+| phi4:14b: non rispetta istruzione "SOLO estratto" in CUAD | **Confermato** | Non adatto per estrazione clausole strutturata |
 
 ---
 

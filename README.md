@@ -19,7 +19,8 @@ Identificare il miglior LLM locale eseguibile su **RTX 4090 16GB VRAM** con perf
 | phi4:14b | 65.7% | 83.3% | 3.8%¹ | 79.0% | 46.0% | 35 |
 | qwen3:32b | — | — | 46.2% | — | — | 5⛔ |
 
-> ¹ phi4:14b CUAD: rifiuta di estrarre clausole nel 96% dei casi → F1 quasi zero
+> ¹ phi4:14b CUAD: non segue l'istruzione "SOLO l'estratto" — aggiunge testo esplicativo che abbassa F1 a quasi zero. Con formato rispettato: ~37–38%
+> CUAD nota metodologica: campionamento senza seed fisso → ogni modello ha girato su 80 item diversi (stessa distribuzione 53/47% presente/assente). Impatto stimato ±2–3 pp; ranking valido.
 
 **Raccomandazione:** `qwen3:14b` — miglior TTR-Score (83.5%), supera Claude 4.6 su LegalBench (95.8%), 9GB VRAM, 35 tok/s. Claude API per MMLU-Pro-class tasks (knowledge gap reale: 62% vs 48%).
 
