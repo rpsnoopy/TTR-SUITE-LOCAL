@@ -1,6 +1,6 @@
 # Selezione LLM Locale per TTR-SUITE — Sintesi Operativa
 
-> **Data:** 23 febbraio 2026 (risultati finali — LegalBench v2 + MMLU-Pro v2)
+> **Data:** 23 febbraio 2026 (risultati finali v1.3 — LegalBench v2 + MMLU-Pro v2 + phi4:14b)
 > **Obiettivo:** Identificare un LLM locale eseguibile su RTX 4090 (16GB VRAM) con performance comparabili a Claude Sonnet 4.6 nell'analisi e sintesi di documenti legali/IP
 > **Deliverable:** Benchmark suite eseguita + risultati misurati + raccomandazione operativa
 
@@ -55,10 +55,12 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 | **gpt-oss:20b** ⚡ | 75.1% | 87.5% | 51.2% | 86.0% | 38.5% | **80** | ~13GB |
 | **deepcoder:14b** | 74.4% | 83.3% | 46.2% | 79.0% | 43.0% | 32 | ~9GB |
 | **qwen3:30b-a3b** | 70.9% | 79.2% | 48.8% | 84.0% | **48.0%** | 30 | ~18GB* |
+| **phi4:14b** | 65.7% | 83.3% | 3.8%¹ | 79.0% | 46.0% | 35 | ~9GB |
 | **qwen3:32b** ⛔ | — | — | 46.2% | — | — | **5** | split CPU |
 
 > *qwen3:30b-a3b → CPU/GPU split su 16GB, velocità degradata
 > ⛔ qwen3:32b interrotto: 5 tok/s inaccettabile (CPU/GPU split su 16GB)
+> ¹ phi4:14b CUAD: il modello risponde "nessuna clausola presente" nel 96% dei casi (77/80 item) — estrema conservatività nell'estrazione → F1 quasi zero
 
 ### Gap rispetto a Claude Sonnet 4.6
 
@@ -93,6 +95,7 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 - **qwen3:30b-a3b** — CPU/GPU split, qwen3:14b è migliore su LegalBench e 3x più veloce
 - **deepcoder:14b** — coder specializzato, TTR-Score inferiore a qwen3:14b su tutti i benchmark legali
 - **mistral-small:24b** — buon LegalBench (91.7%) ma CUAD e IFEval inferiori, e più lento di qwen3:14b
+- **phi4:14b** — MMLU-Pro discreto (46%) ma CUAD quasi zero (3.8%): non adatto all'analisi contrattuale
 
 ---
 
@@ -135,10 +138,10 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 
 | Modello | VRAM est. | Note |
 |---------|:--------:|------|
-| `phi-4:14b` | ~9GB | Microsoft Phi-4, forte su ragionamento |
+| `phi4:14b` | ~9GB | ✅ Testato: TTR-Score 65.7% — CUAD 3.8% (troppo conservativo), MMLU-Pro 46% |
 | `gemma3:12b` | ~8GB | Google Gemma 3 |
 | `llama3.3:70b` | >16GB | Richiederebbe upgrade VRAM o offload |
 
 ---
 
-*Aviolab AI — TTR-SUITE Benchmark Suite v1.2, febbraio 2026*
+*Aviolab AI — TTR-SUITE Benchmark Suite v1.3, febbraio 2026*

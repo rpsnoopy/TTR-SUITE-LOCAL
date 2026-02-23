@@ -62,6 +62,11 @@ MODELS: dict[str, dict] = {
         "tag":      "mistral-small:24b",
         "thinking": False,
     },
+    "phi4-14b": {
+        "provider": "ollama",
+        "tag":      "phi4:14b",             # ~9GB — pure GPU su 16GB VRAM
+        "thinking": False,
+    },
     # ── Modelli cloud (Anthropic API) ───────────────────────────────────────
     "claude-sonnet-4-5": {
         "provider": "anthropic",
