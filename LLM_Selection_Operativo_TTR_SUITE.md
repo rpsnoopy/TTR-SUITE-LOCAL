@@ -56,7 +56,7 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 | Modello | TTR-Score | LegalBench | CUAD | IFEval | MMLU-Pro | tok/s | VRAM |
 |---------|:---------:|:----------:|:----:|:------:|:--------:|:-----:|:----:|
 | **qwen3:14b** ⭐ | **82.5%** | **95.8%** | 45.0% | 87.0% | 42.5% | **35** | ~9GB |
-| **Claude Sonnet 4.6** (API) | 81.6% | 91.7% | **53.8%** | **93.0%** | **62.0%** | — | — |
+| **Claude Sonnet 4.6** (API) | 80.2% | 91.7% | 45.0% | **93.0%** | **62.0%** | — | — |
 | **mistral-small:24b** | 77.5% | 91.7% | 45.0% | 80.0% | 39.5% | 21 | ~14GB |
 | **gpt-oss:20b** ⚡ | 73.7% | 87.5% | 42.5% | 86.0% | 38.5% | **80** | ~13GB |
 | **deepcoder:14b** | 73.6% | 83.3% | 41.2% | 79.0% | 43.0% | 32 | ~9GB |
@@ -74,12 +74,12 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 | Benchmark | Miglior locale | Gap vs Claude |
 |-----------|---------------|:-------------:|
 | LegalBench | **qwen3:14b (95.8%)** | **+4.1 pp** ← supera Claude |
-| CUAD | Claude domina (53.8% vs 45.0%) | -8.8 pp |
+| CUAD | Pari (qwen3:14b / mistral / Claude 45.0%) | 0 pp |
 | IFEval | qwen3:14b (87.0%) | -6.0 pp |
 | MMLU-Pro | qwen3:30b-a3b (48.0%) | -14.0 pp |
-| **TTR-Score** | **qwen3:14b (82.5%)** | **+0.9 pp** ← supera Claude |
+| **TTR-Score** | **qwen3:14b (82.5%)** | **+2.3 pp** ← supera Claude |
 
-**Osservazione chiave:** Con i benchmark corretti metodologicamente (CUAD seed fisso, num_predict adeguato), **qwen3:14b supera ancora Claude Sonnet 4.6 sul TTR-Score aggregato** (82.5% vs 81.6%). Il vero vantaggio di Claude rimane su **CUAD** (53.8% vs 45.0%) e **MMLU-Pro** (62% vs 48% del miglior locale). Su LegalBench e IFEval i modelli locali sono competitivi o superiori.
+**Osservazione chiave:** Con tutti i benchmark corretti metodologicamente (CUAD seed=42 fisso, num_predict adeguato, tutti i modelli sugli stessi item), **qwen3:14b supera chiaramente Claude Sonnet 4.6 sul TTR-Score aggregato** (82.5% vs 80.2%). Il vero vantaggio di Claude rimane su **MMLU-Pro** (62% vs 48% del miglior locale) e **IFEval** (93% vs 87%). Su CUAD i modelli sono ora pari (45.0%). Su LegalBench qwen3:14b supera Claude (95.8% vs 91.7%).
 
 ---
 
@@ -87,7 +87,7 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 
 ### Raccomandazione modello singolo
 
-**`qwen3:14b`** — migliore TTR-Score (82.5%), best LegalBench in assoluto (95.8%), solo 9GB VRAM, 35 tok/s. Costo zero. Supera Claude 4.6 su LegalBench e IFEval.
+**`qwen3:14b`** — migliore TTR-Score (82.5%), best LegalBench in assoluto (95.8%), solo 9GB VRAM, 35 tok/s. Costo zero. Supera Claude 4.6 di +2.3 pp sul TTR-Score con tutti i benchmark su item identici.
 
 ### Strategia ibrida per TTR-SUITE (RTX 4090 16GB)
 

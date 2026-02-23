@@ -11,7 +11,7 @@ Identificare il miglior LLM locale eseguibile su **RTX 4090 16GB VRAM** con perf
 | Modello | TTR-Score | LegalBench | CUAD | IFEval | MMLU-Pro | tok/s |
 |---------|:---------:|:----------:|:----:|:------:|:--------:|:-----:|
 | **qwen3:14b** ⭐ | **82.5%** | **95.8%** | 45.0% | 87.0% | 42.5% | **35** |
-| Claude Sonnet 4.6 (API) | 81.6% | 91.7% | **53.8%** | **93.0%** | **62.0%** | — |
+| Claude Sonnet 4.6 (API) | 80.2% | 91.7% | 45.0% | **93.0%** | **62.0%** | — |
 | mistral-small:24b | 77.5% | 91.7% | 45.0% | 80.0% | 39.5% | 21 |
 | gpt-oss:20b ⚡ | 73.7% | 87.5% | 42.5% | 86.0% | 38.5% | **80** |
 | deepcoder:14b | 73.6% | 83.3% | 41.2% | 79.0% | 43.0% | 32 |
@@ -23,7 +23,7 @@ Identificare il miglior LLM locale eseguibile su **RTX 4090 16GB VRAM** con perf
 > ² qwen3:30b-a3b CUAD: era 18.8% con num_predict=512 (thinking chains esaurivano il budget, 50/80 risposte vuote) → 43.8% con num_predict=1024
 > CUAD v1.4: seed=42 fisso in cuad.py → tutti i modelli valutati sugli stessi 80 item identici
 
-**Raccomandazione:** `qwen3:14b` — miglior TTR-Score (82.5%), supera Claude 4.6 su LegalBench (95.8%), 9GB VRAM, 35 tok/s. Claude API per CUAD avanzato e MMLU-Pro-class tasks.
+**Raccomandazione:** `qwen3:14b` — miglior TTR-Score (82.5% vs 80.2% di Claude), supera Claude su LegalBench (95.8% vs 91.7%) e CUAD pari (45.0%). Claude API per IFEval e MMLU-Pro-class tasks.
 
 ## Struttura Repository
 
