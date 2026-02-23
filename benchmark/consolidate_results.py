@@ -143,7 +143,22 @@ def load_all_csvs(results_dir: Path) -> pd.DataFrame:
         models = sorted(df["model"].dropna().unique())
         print(f"  {f.name}: {len(df)} rows — {models}")
 
-    return pd.concat(frames, ignore_index=True)
+    df_all = pd.concat(frames, ignore_index=True)
+
+    # Deduplicate: if the same (model, benchmark, task_id) appears in multiple
+    # runs, keep only the LAST entry (CSVs are sorted by filename = timestamp,
+    # so the latest run wins).  This prevents old buggy runs from contaminating
+    # re-run benchmarks.
+    if "task_id" in df_all.columns:
+        before = len(df_all)
+        df_all = df_all.drop_duplicates(
+            subset=["model", "benchmark", "task_id"], keep="last"
+        )
+        dropped = before - len(df_all)
+        if dropped:
+            print(f"  [dedup] dropped {dropped} duplicate rows (kept latest run per task)")
+
+    return df_all
 
 
 def classify_models(df: pd.DataFrame):
