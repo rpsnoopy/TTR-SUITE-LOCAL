@@ -24,6 +24,8 @@ from src.logger import setup_logger
 
 log = setup_logger(__name__)
 
+SAMPLE_SEED = 42  # seed riproducibile per campionamento item (come legalbench/mmlupro)
+
 # HuggingFace dataset ID per CUAD (Parquet, formato SQuAD, no loading script)
 CUAD_HF_DATASET = "alex-apostolo/filtered-cuad"
 
@@ -116,7 +118,8 @@ class CUADBenchmark(BenchmarkBase):
                 "category": cat,
             })
 
-        # Campiona n item per categoria
+        # Campiona n item per categoria (seed riproducibile)
+        rng = random.Random(SAMPLE_SEED)
         items: list[dict] = []
         idx = 0
         for cat, bucket in buckets.items():
@@ -124,7 +127,7 @@ class CUADBenchmark(BenchmarkBase):
                 log.warning("CUAD: nessun item per categoria '%s'", cat)
                 continue
             k = min(n, len(bucket))
-            sample = random.sample(bucket, k)
+            sample = rng.sample(bucket, k)
             for item in sample:
                 item["_idx"] = idx
                 idx += 1

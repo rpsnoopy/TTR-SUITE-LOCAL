@@ -1,6 +1,6 @@
 # Selezione LLM Locale per TTR-SUITE — Sintesi Operativa
 
-> **Data:** 23 febbraio 2026 (risultati finali v1.3 — LegalBench v2 + MMLU-Pro v2 + phi4:14b)
+> **Data:** 23 febbraio 2026 (risultati finali v1.4 — CUAD seed=42 fisso + num_predict=1024 per thinking models)
 > **Obiettivo:** Identificare un LLM locale eseguibile su RTX 4090 (16GB VRAM) con performance comparabili a Claude Sonnet 4.6 nell'analisi e sintesi di documenti legali/IP
 > **Deliverable:** Benchmark suite eseguita + risultati misurati + raccomandazione operativa
 
@@ -47,38 +47,39 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 
 **CUAD — meccanica di scoring chiarita (audit post-hoc):** Il dataset `filtered-cuad` include sia item con clausola presente (53.4%) sia item con clausola assente (46.6%). Per gli item senza clausola, il ground truth è impostato a `"NESSUNA CLAUSOLA PRESENTE"` — i modelli che rispondono esattamente con questa frase ottengono F1=1.0. Questo spiega i punteggi 46–54%: la componente principale è il corretto riconoscimento degli item senza clausola. L'F1 è binario (0 o 1) perché i modelli estraggono il testo in modo esatto o lo mancano completamente.
 
-**CUAD — limitazione: assenza di seed (nota):** Il campionamento dei 10 item per categoria avviene senza seed fisso → ogni run usa item diversi → i punteggi CUAD non sono confrontabili item-per-item tra modelli. L'impatto stimato è ±2–3 pp di varianza da campionamento (624 item totali, 78 per categoria, 46–53% split positivo/negativo per categoria). Il ranking relativo rimane valido.
+**CUAD v1.4 — seed fisso e num_predict corretto:** Il campionamento è ora con seed=42 fisso (`SAMPLE_SEED = 42` in `cuad.py`) → tutti i modelli sono valutati sugli stessi identici 80 item. Parametro `num_predict=1024` per modelli con thinking implicito (Qwen3:30b): il precedente `num_predict=512` esauriva il budget sui ragionamenti interni, producendo il 62.5% di risposte vuote per qwen3-30b-a3b (18.8% → 43.8% dopo fix). Tutti i modelli ri-testati con questi parametri corretti.
 
 **phi4 CUAD — revisione diagnosi:** phi4 non è "troppo conservativo" ma **non segue l'istruzione "SOLO l'estratto"**: aggiunge testo esplicativo dopo "NESSUNA CLAUSOLA PRESENTE", abbassando la precision dell'F1 a quasi zero anche sugli item senza clausola (dove altri modelli ottengono F1=1.0). Se rispondesse concisamente, otterrebbe circa 37–38% solo dagli item senza clausola. Risultato: 3.8% = capacità di estrazione scarsa + istruzione di formato non rispettata.
 
-### Tabella risultati finali
+### Tabella risultati finali (v1.4 — CUAD seed=42, num_predict=1024)
 
 | Modello | TTR-Score | LegalBench | CUAD | IFEval | MMLU-Pro | tok/s | VRAM |
 |---------|:---------:|:----------:|:----:|:------:|:--------:|:-----:|:----:|
-| **qwen3:14b** ⭐ | **83.5%** | **95.8%** | 51.2% | 87.0% | 42.5% | **35** | ~9GB |
+| **qwen3:14b** ⭐ | **82.5%** | **95.8%** | 45.0% | 87.0% | 42.5% | **35** | ~9GB |
 | **Claude Sonnet 4.6** (API) | 81.6% | 91.7% | **53.8%** | **93.0%** | **62.0%** | — | — |
-| **mistral-small:24b** | 77.9% | 91.7% | 47.5% | 80.0% | 39.5% | 21 | ~14GB |
-| **gpt-oss:20b** ⚡ | 75.1% | 87.5% | 51.2% | 86.0% | 38.5% | **80** | ~13GB |
-| **deepcoder:14b** | 74.4% | 83.3% | 46.2% | 79.0% | 43.0% | 32 | ~9GB |
-| **qwen3:30b-a3b** | 70.9% | 79.2% | 48.8% | 84.0% | **48.0%** | 30 | ~18GB* |
-| **phi4:14b** | 65.7% | 83.3% | 3.8%¹ | 79.0% | 46.0% | 35 | ~9GB |
-| **qwen3:32b** ⛔ | — | — | 46.2% | — | — | **5** | split CPU |
+| **mistral-small:24b** | 77.5% | 91.7% | 45.0% | 80.0% | 39.5% | 21 | ~14GB |
+| **gpt-oss:20b** ⚡ | 73.7% | 87.5% | 42.5% | 86.0% | 38.5% | **80** | ~13GB |
+| **deepcoder:14b** | 73.6% | 83.3% | 41.2% | 79.0% | 43.0% | 32 | ~9GB |
+| **qwen3:30b-a3b** | 70.1% | 79.2% | 43.8%² | 84.0% | **48.0%** | 30 | ~18GB* |
+| **phi4:14b** | 65.5% | 83.3% | 2.5%¹ | 79.0% | 46.0% | 35 | ~9GB |
+| **qwen3:32b** ⛔ | — | — | — | — | — | **5** | split CPU |
 
 > *qwen3:30b-a3b → CPU/GPU split su 16GB, velocità degradata
 > ⛔ qwen3:32b interrotto: 5 tok/s inaccettabile (CPU/GPU split su 16GB)
-> ¹ phi4:14b CUAD: non segue l'istruzione "SOLO l'estratto" — aggiunge testo esplicativo che abbassa l'F1 a quasi zero. Score corretto se formato rispettato: ~37–38%
+> ¹ phi4:14b CUAD: aggiunge testo esplicativo dopo "NESSUNA CLAUSOLA PRESENTE" → precision penalty → F1≈0. Score corretto se formato rispettato: ~37–38%
+> ² qwen3:30b-a3b CUAD: era 18.8% con num_predict=512 (thinking exhaustion, 50/80 risposte vuote) → 43.8% con num_predict=1024
 
 ### Gap rispetto a Claude Sonnet 4.6
 
 | Benchmark | Miglior locale | Gap vs Claude |
 |-----------|---------------|:-------------:|
 | LegalBench | **qwen3:14b (95.8%)** | **+4.1 pp** ← supera Claude |
-| CUAD | gpt-oss:20b / qwen3:14b (51.2%) | -2.6 pp |
+| CUAD | Claude domina (53.8% vs 45.0%) | -8.8 pp |
 | IFEval | qwen3:14b (87.0%) | -6.0 pp |
 | MMLU-Pro | qwen3:30b-a3b (48.0%) | -14.0 pp |
-| **TTR-Score** | **qwen3:14b (83.5%)** | **+1.9 pp** ← supera Claude |
+| **TTR-Score** | **qwen3:14b (82.5%)** | **+0.9 pp** ← supera Claude |
 
-**Osservazione chiave:** Con i benchmark corretti metodologicamente, **qwen3:14b supera Claude Sonnet 4.6 sul TTR-Score aggregato** (83.5% vs 81.6%). Il vero vantaggio di Claude rimane su **MMLU-Pro** (62% vs 48% del miglior locale) — la conoscenza giuridica profonda e il ragionamento multi-step su 200 domande di diritto. Su tutti gli altri benchmark i modelli locali sono competitivi o superiori.
+**Osservazione chiave:** Con i benchmark corretti metodologicamente (CUAD seed fisso, num_predict adeguato), **qwen3:14b supera ancora Claude Sonnet 4.6 sul TTR-Score aggregato** (82.5% vs 81.6%). Il vero vantaggio di Claude rimane su **CUAD** (53.8% vs 45.0%) e **MMLU-Pro** (62% vs 48% del miglior locale). Su LegalBench e IFEval i modelli locali sono competitivi o superiori.
 
 ---
 
@@ -86,7 +87,7 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 
 ### Raccomandazione modello singolo
 
-**`qwen3:14b`** — migliore TTR-Score (83.5%), best LegalBench in assoluto (95.8%), solo 9GB VRAM, 35 tok/s. Costo zero. Supera Claude 4.6 su 3 dei 4 benchmark.
+**`qwen3:14b`** — migliore TTR-Score (82.5%), best LegalBench in assoluto (95.8%), solo 9GB VRAM, 35 tok/s. Costo zero. Supera Claude 4.6 su LegalBench e IFEval.
 
 ### Strategia ibrida per TTR-SUITE (RTX 4090 16GB)
 
@@ -115,7 +116,7 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 | LegalBench è su diritto USA, non italiano/europeo | Aperto | Creare task supplementari su diritto italiano/GDPR/AI Act |
 | Benchmark accademici ≠ qualità output reale | Aperto | Integrare con test su documenti TTR-SUITE reali anonimizzati |
 | qwen3:14b genera ~2500 tok/thinking su MMLU-Pro (~65s/domanda) | Aperto | Accettabile per uso batch; per uso interattivo considerare `/no_think` |
-| CUAD: campionamento senza seed fisso → run diversi su item diversi | Noto | Aggiungere SAMPLE_SEED=42 e ri-eseguire per perfetta comparabilità; impatto stimato ±2–3 pp |
+| CUAD: qwen3-30b-a3b thinking exhaustion su num_predict=512 | **Risolto v1.4** | `BENCHMARK_NUM_PREDICT["cuad"] = 1024` in `config.py`; seed=42 fisso |
 | phi4:14b: non rispetta istruzione "SOLO estratto" in CUAD | **Confermato** | Non adatto per estrazione clausole strutturata |
 
 ---
@@ -146,10 +147,10 @@ La benchmark suite è implementata in `benchmark/` (entry point: `benchmark_runn
 
 | Modello | VRAM est. | Note |
 |---------|:--------:|------|
-| `phi4:14b` | ~9GB | ✅ Testato: TTR-Score 65.7% — CUAD 3.8% (troppo conservativo), MMLU-Pro 46% |
+| `phi4:14b` | ~9GB | ✅ Testato: TTR-Score 65.5% — CUAD 2.5% (non segue formato "SOLO estratto"), MMLU-Pro 46% |
 | `gemma3:12b` | ~8GB | Google Gemma 3 |
 | `llama3.3:70b` | >16GB | Richiederebbe upgrade VRAM o offload |
 
 ---
 
-*Aviolab AI — TTR-SUITE Benchmark Suite v1.3, febbraio 2026*
+*Aviolab AI — TTR-SUITE Benchmark Suite v1.4, febbraio 2026*

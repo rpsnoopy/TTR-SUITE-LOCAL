@@ -97,9 +97,11 @@ SAMPLE_SIZES: dict[str, tuple[int, int]] = {
 # Max tokens to generate per benchmark (Ollama num_predict).
 # MMLU-Pro needs 4096 because Qwen3 models exhaust 1024 tokens on thinking
 # chains before producing a final answer letter, yielding empty responses.
+# CUAD raised to 1024: qwen3-30b-a3b exhausted 512 tokens on thinking chains
+# for long contract excerpts (seed=42 run), yielding 50/80 empty responses.
 BENCHMARK_NUM_PREDICT: dict[str, int] = {
     "legalbench": 512,    # short labels (Yes/No, single word)
-    "cuad":       512,    # short clause extractions
+    "cuad":       1024,   # clause extraction + thinking models need headroom
     "ifeval":     1024,   # may require structured multi-line output
     "mmlupro":    4096,   # Qwen3 thinking chains need room to finish
 }
