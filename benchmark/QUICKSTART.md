@@ -38,7 +38,7 @@ e produce un report CSV + XLSX con accuracy e throughput.
 
 In Esplora File, naviga in:
 ```
-C:\Users\rpsno\OneDrive\Documents\GitHub\TTR-SUITE-LOCAL\benchmark
+C:\GitHub\TTR-SUITE-LOCAL\benchmark
 ```
 Click destro sullo sfondo → **"Apri nel terminale"**
 
